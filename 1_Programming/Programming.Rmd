@@ -1,0 +1,210 @@
+---
+title: 'Tutorial 1: R Programming Basics'
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+load("601-Programming.rdata")
+knitr::opts_chunk$set(echo = TRUE)
+tutorial_options(exercise.timelimit = 10)
+```
+
+## **Introduction**
+
+Welcome to the R Tutorials of DACSS 601. This is the first of eight tutorials that will teach you the fundamentals of R, a statistical programming language, in order to conduct basic research in the social sciences. 
+
+First, a note: These online tutorials provide an accessible environment to learn the basic commands of R using pre-loaded data. When it comes time to use R to analyze your own data, you will have to download R and R Studio. There is infromation available on our Google Classroom for doing so. All the principles and commands you learn in these online tutorials can be used in R Studio. 
+
+In this tutorial, we will learn the following concepts:
+
+* The structure of R code and how to run it
+* Basic mathematics and logical operators in R
+* How to assign variables
+* How to work with vectors
+
+And you will learn the following commands:
+
+* `+`,`-`,`*`,`/`
+* `==`,`>`,`<`,`>=`,`<=`
+* `<-`
+* `c()`
+
+## **What is R?**
+
+R is a programming language for statistical computing, or in other words, a really smart calculator. Just like any other calculator, it will evaluate mathematical expressions, as you can see below:
+
+```{r, echo=TRUE}
+12 + 2
+12 - 2
+12 * 2
+12 / 2
+```
+
+R uses `+` for addition, `-` for subtraction, `*` for multiplication, and `/` for division. 
+
+In R, code is written on separate lines (Press `Enter` to drop to the next line). To run the code you write in this tutorial, hit the `Run Code` button (or use `Control-Enter` on PCs and `Command-Enter` on Macs) and let R evaluate it. 
+
+Try it out below. 
+
+```{r trymath, exercise=TRUE}
+
+
+
+
+```
+
+```{r trymath-solution}
+#examples of R math
+2 + 4
+10 - 5
+4 * 3
+20 / 10
+```
+
+Everything that you do in R will consist of this same process: typing code, running code, and receiving results.
+
+## **Logical Data**
+
+In the previous section, we saw how R can evaluate **numeric** data, delivering you numeric answers. However, R can also evaluate **logical** data as `TRUE` or `FALSE`. The most basic way is with the double equal-sign `==`. 
+
+(Text written after `#` signs are just comments, not evaluated by code.)
+
+```{r, echo=TRUE}
+#Logical statement:
+2 == 2 
+#Illogical statement:
+2 == 3 
+```
+
+As you can see, a logical statement gives you `TRUE` and an illogical statement gives you `FALSE`. R can also evaluate "greater than" statements with `>` and "less than" statements `<`. "Greater than or equal to" is represented by `>=`, and "less than or equal to" is represented by `<=`. These and `==` are the most fundamental logical operators to know, but a full list of can be found  [here](https://www.statmethods.net/management/operators.html) if you are for some reason interested. 
+
+```{r, echo=TRUE}
+#All logical statements:
+8 > 5 
+10 + 9 < 20 
+20 / 2 >= 10 
+18 - 4 <= 3 * 5 
+```
+
+Try it out for yourself. 
+
+```{r trylogic, exercise=TRUE}
+
+
+
+
+```
+
+```{r trylogic-solution}
+#examples of R logic
+3 == 3
+2 > 1
+3 < 12
+5 >= 4
+6 <= 6
+```
+
+## **Assigning Variables**
+
+Now that we understand the basic math and logic of R as well as how to run code, we can move on to one of the most fundamental and frequently used functions of R: assigning variables with `<-`. 
+
+You can use `<-` to create variables with certain assigned values. Use the format: **variable <- value** so that the little arrow is pointing at the new variable you are creating. R will treat this new variable synonomously with its value. 
+
+```{r echo=TRUE}
+#create variable x
+x <- 7
+#see it in action
+x + 3
+x * x
+x + 13 == 20
+```
+
+Don't panic if you start getting flashbacks of middle school algebra. If you want to see the value of a variable (or any other type of data, as you progress through these tutorials), let R do the math: simply type the variable and run the code. You will receive its value back. 
+
+```{r echo=TRUE}
+x
+```
+
+We pre-loaded variables *y* and *z*. See if you can find out their values, or create another new variable equal to their sum. 
+
+```{r tryvars, exercise=TRUE}
+
+
+
+```
+
+```{r tryvars-solution}
+#experiment with y and z
+y
+z
+yz <- y + z
+```
+
+## **Vectors**
+
+A vector is a string of data of the same type. Right now, just think of it as a list of numbers. They are a useful launching point to learn how to apply R concepts before looking at at huge datasets. 
+
+They are created with `c()` using commas to separate values, and assigned names using our friend `<-`. Like so:
+
+```{r echo=TRUE}
+scores <- c(14,13,12,15,16,14,15,10,8,12)
+scores
+```
+
+How is this useful? Let's say the above "scores" vector contains the scores of ten students on a recent 17-question quiz. If we want to find out their grades as a percent of 100, we can use the same math we learned for single numeric values on entire vectors. The math is applied to every element of the vector separately. 
+
+```{r echo=TRUE}
+#grades variable is calculated by dividing the scores by 17
+grades <- scores/17
+grades
+#multiply grades by 100 for clean percentages
+grades <- grades*100
+grades
+```
+
+Now it is easy to see which students passed or failed the quiz.
+
+### Exercise 1
+
+The same ten students took a second quiz, this one containing 15 questions. Their scores to the second quiz are listed in the new vector below:
+
+```{r echo=TRUE}
+new_scores <- c(13,12,11,9,12,13,15,12,6,14)
+new_scores
+```
+
+Create a vector **new_grades** that contains the students' scores on the second quiz as a percent of 100. 
+
+```{r tryvectors, exercise=TRUE}
+#new_grades variable is calculated by dividing the new scores by 15
+
+#multiply new_grades by 100 for clean percentages
+
+#average the two quizzes together into final grades
+
+#weight the grades by 5 points
+
+```
+
+```{r tryvectors-solution}
+#new_grades variable is calculated dividing the scores by 15
+new_grades <- new_scores/15
+#multiply new_grades by 100 for clean percentages
+new_grades <- new_grades*100
+#average the two quizzes together into final grades
+final_grades <- (grades+new_grades)/2
+#weight the grades by 5 points
+final_grades + 5
+```
+
+Advanced Exercise 1a: You should now have two vectors: **grades** and **new_grades**. See if you can average these two sets of grades together into another new vector: **final_grades**. 
+
+Advanced Exercise 1b: Maybe you aren't happy with the students' grades. Try weighting **final_grades** by an increase of 5 points. 
+
+## **Conclusion**
+
+You now know the basic structure of typing and running code, how to evaluate basic mathematics with R, and how to create variables and vectors. From here on out, we will use these foundations to move beyond short strings of numbers and begin analyzing large datasets of real-world social science data.
+
+Coming up in the next tutorial... we will learn about dataframes and how to unpack them with R.

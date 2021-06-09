@@ -1,0 +1,359 @@
+---
+title: 'Tutorial 6: Data Structures'
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+load("601-DataStructures.rdata")
+tutorial_options(exercise.timelimit = 10)
+```
+
+## **Introduction**
+
+In this tutorial, we will learn commands to find out basic descriptive statistics about numeric data in our pre-loaded datasets. 
+
+In the last tutorial, we learned how to find very preliminary statistics using `table()` and `prop.table()`. However, those tables are most useful with *nominal* data. With *numeric* data, different commands are needed to calculate averages and distributions of variables. 
+
+We will mainly use the `summarize()` function. This is another **tidyverse** command that may seem unneccessarily complicated with minor tasks and small sets of data, but becomes very useful and more efficient than other methods when undertaking larger data, multiple variables, and bigger tasks. Knowing the tricks to using `summarize()` will be an advantage in future data analysis with R.
+
+At the end of the tutorial, we will also learn about piping functions in R with `%>%` and `group_by()`. This is a crucial shortcut for using multiple commands in a sequence with the same data. It will make `summarize()` and other commands in the future much easier to use.
+
+We will learn the following R Commands:
+
+* `summarize()`
+* `summarize_all()`
+ + `mean()`
+ + `median()`
+ + `min()`
+ + `max()`
+ + `sd()`
+ + `var()`
+ + `IQR()`
+* `str()`
+
+We will use the following datasets:
+
+* Post-Secondary Employment Outcomes: **pseo** 
+* Worldwide Access to Electricity: **electricity**
+
+## **Summarize Basics**
+
+`Summarize()` is a function that provides statistics about data. It uses other functions inside of it to calculate different statistics, following the basic format: `summarize(data, label = function(column))`.
+
+We will learn all of these inner-functions shortly, but to understand how `summarize()` works, first we will focus on `mean()`. This finds the mean of numeric data. 
+
+In the following example, the mean of **2016** in **electric** is calculated. 
+
+```{r, echo=TRUE}
+#Find the mean of 2016 in electric
+summarize(electric, mean(`2016`))
+```
+
+In 2016, the average percentage of national population with access to electricity was 83.6%. At this stage, `summarize()` still seems unnecessarily complicated. We will unlock more of its capabilities soon, but until then, we there are more basics to understand.
+
+### Backquotes and incorrect variable names
+
+R has two restrictions on variable names: 
+
+* variable names should not start with a number, and
+* variable names should not include a space.
+
+However, when you read in external datasets, some variable names may be incorrect - they may start with a number or contain a space. These variable names may still be used, but must be `quoted` when referring to a column name that is a number, such as **2016**, it is imperative to use single backquotes around the name (`` `2016` ``) but not double quotes (`` "2016" ``). Also be aware that a backquote (`` ` ``) is not an apostrophe (`` ' ``). On most keyboards, the single quote is found in the top-left near `1` and `tab`.
+
+In the following example, compare the resutls from using no quotes, single backquotes, and double quotes.
+
+```{r, echo=TRUE}
+#Find the mean of 2016 in electric
+summarize(electric, mean(2016))
+#Find the mean of 2016 in electric
+summarize(electric, mean(`2016`))
+#Find the mean of 2016 in electric
+summarize(electric, mean("2016"))
+```
+
+### Exercise 1
+
+Try finding the mean of the variable **p25_earnings** in the **pseo** dataset.
+
+```{r mean, exercise=TRUE}
+#Find mean of p25_earnings in pseo
+
+```
+
+```{r mean-solution}
+#Find mean of p25_earnings in pseo 
+summarize(pseo, mean(p25_earnings))
+```
+
+Hm, we got strange results - what do you think happened? What should we do? We will return to this issue in the section on missing data, below.
+
+### Hint: Summarise or Summarize
+
+For those conflicted on how to spell "summarize", you can use the function `summarise()` (spelled with an **s** instead of a **z**) and it works identically. The example below is the same as the first, except for the spelling change. 
+
+```{r, echo=TRUE}
+#Find the mean of 2016 in electric
+summarise(electric, mean(`2016`))
+```
+
+## Summarize: Naming Output Columns
+In the above examples, the output table from `summarize` uses function that we call **mean(`2016`)** as the column name in the output table. But this looks fairly messy, and could be a problem if the original variable name is long. `Summarize` allows you to name the output column yourself by adding the desired column name followed by `=`:
+
+```{r, echo=TRUE}
+#Find the mean of 2016 in electric (with label)
+summarize(electric, mean.2016=mean(`2016`))
+```
+
+### Exercise 2
+
+Try finding the mean of the variable **2015** in the **electric** dataset and label the output column as **mean.2015**.
+
+```{r meanlabel, exercise=TRUE}
+#Find the mean of 2015 in electric (with label)
+
+```
+
+```{r meanlabel-solution}
+#Find the mean of 2015 in electric (with label)
+summarize(electric, mean.2015=mean(`2015`))
+```
+
+## Summarizing multiple variables
+
+One of the great things about using the tidyverse function `summarize` to access the base R functions like `mean()` are that you can apply functions to multiple variables in a single function call. For example, lets get the mean of both 2015 and 2016 from **electric**.
+
+```{r, echo=TRUE}
+#Find the mean of 2015 and 2016 in electric (with labels)
+summarize(electric, mean.2015 = mean(`2015`), mean.2016 = mean(`2016`))
+```
+
+### Exercise 3
+
+Try finding the mean of three variables from **pseo**:
+
+* p25_earnings
+* p50_earnings
+* p75_earnings
+
+```{r meanmulti, exercise=TRUE}
+#Find the mean of 2015 in electric (with label)
+
+```
+
+```{r meanmulti-solution}
+#Find the mean of 2015 in electric
+summarize(pseo, mean(p25_earnings), mean(p50_earnings), mean(p75_earnings))
+```
+
+Hm, we once again got strange results - what do you think happened? What should we do? 
+
+Also, it is a bit annoying to have to write out three or four variables in a row - we will come back to that issue when we discuss the function `summarize_all`.
+
+## Handling Missing Data in Summarize
+
+Everytime we try to get the information about the earnings data from the *pseo* dataset, we get the result `NA` - what is going on? First, lets take a look at the original pseo data:
+
+```{r}
+# use the str() function to quickly get variable format information
+str(pseo)
+```
+
+From the output, you should be able to quickly notice two things about the earnings variables:
+
+* they are all of type `int` or integer - a numeric variable (good!)
+* there are several individual entries listed as `NA` 
+
+In other words, not all cases have a valid value in the earnings variables.
+
+Interestingly, the same thing happens when we try to find the mean for the **1990** variable in **electric**.
+
+```{r, echo=TRUE}
+#Find the mean of 1990 in electric (missing data included)
+summarize(electric, mean.1990 = mean(`1990`))
+```
+
+This returns a mean of `NA`, which is not what we want. In the **electric** dataset, there is information for every country in later years like 2015 and 2016, but information for many countries is missing in earlier years. This is an unavoidable reality resulting from the limited information available when the World Bank originally collected this data. It is futile for R to try to average missing data with available data, so it gives up and says the mean is also not available. 
+
+Luckily, there is an easy fix. By adding an additional argument, `na.rm = TRUE`, to the mean function, R will remove missing data from its calculation and just find the mean of the available data. We have to explicitly set `na.rm` to be `TRUE` because by default (even though you can't see it) it is set to be false. 
+
+As you can see below, this additional argument is written inside the `mean()` function after a comma. 
+
+```{r, echo=TRUE}
+#Find the mean of 1990 in electric (missing data removed)
+summarize(electric, mean.1990 = mean(`1990`, na.rm = TRUE))
+```
+
+This returns the correct mean, 66.5%, which is the mean of all the countries that have available data. Remember to use `na.rm = TRUE` in the future if you are frustrated about missing data- it works inside all data summary functions, such as `mean()`, `median()`, `sd()` and other functions discussed in the following tutorial section.
+
+### Exercise 4
+
+Use `summarize()` and `mean()` to find the mean of **2000** and **2010** in **electric**. Remember to set `na.rm = TRUE`. 
+
+```{r meanna, exercise=TRUE}
+#Find mean of 2000 and 2010 in electric 
+
+```
+
+```{r meanna-solution}
+#Find mean of 2000 and 2010 in electric 
+summarize(electric, mean.2000 = mean(`2000`, na.rm = TRUE), mean.2010 = mean(`2010`))
+```
+
+## **Using Other Univariate Statistics Functions in Summarize**
+
+Now you know how `summarize()` works and how to navigate around common errors. 
+
+In addition to `mean()`, there are other useful univariate statistics functions (i.e., functions that provide summary or descriptive statistics for a single variable) that can be used inside `summarize()`. Here is the basic list:
+
+```{r, eval=FALSE}
+mean() #mean
+median() #median
+min() #lowest value
+max() #highest value
+sd() #standard deviation
+var() #variance (standard deviation squared)
+IQR() #interquartile range
+```
+
+These are the most practical to know for basic descriptive statistics, but more can be found [here](https://dplyr.tidyverse.org/reference/summarise.html#useful-functions) or elsewhere online if you need to go further.
+
+You can measure many stats within `summarize()` using commas in the same way you can summarize information about multiple columns. In the following example, all of the statistics above are measured for the **2015** column of **electric**. 
+
+```{r, echo=TRUE}
+#Find basic stats of 2015 in electric
+summarize(electric, mean.2015 = mean(`2015`), median.2015 = median(`2015`), min.2015 = min(`2015`), max.2015 = max(`2015`), sd.2015 = sd(`2015`), var.2015 = var(`2015`), IQR.2015 = IQR(`2015`))
+```
+
+These seven statistics, measuring both central tendency (mean, median) and dispersion (sd, min/max, IQR), supply enough information to make some preliminary conclusions about the state of worldwide electricity access in **2015**. 
+
+### Exercise 5
+
+Use `summarize()` and the correct inside functions to find the median and interquartile range of **p50_earnings** (average yearly earnings of college graduates) in **pseo**. Remember to use `na.rm = TRUE` if data is missing. 
+
+```{r functions, exercise=TRUE}
+#Find the median and interquartile range of p50_earnings in pseo
+
+```
+
+```{r functions-solution}
+#Find the median and interquartile range of p50_earnings in pseo
+summarize(pseo, median = median(p50_earnings, na.rm = TRUE), IQR = IQR(p50_earnings, na.rm = TRUE))
+```
+
+Note: This is a somewhat crude calculation because it lumps together all the data in **pseo**, which contains the earnings for different schools and majors at 1, 5 and 10 years after graduation. The median of average earnings after 1, 5, and 10 years from college does not necessarily have any real-world significance. In a future tutorial, we will learn how to group data within `summarize()` so that we can find individual average earnings for different majors or for different years out from college. 
+
+## **Summarize_All**
+
+`Summarize()` has a sister function `summarize_all()` that returns values for every individual column in a dataset. This allows you to quickly find summary statistics for multiple variables.
+
+Let's say you want to find the average worldwide access to electricity from every year in **electric** at once. `Summarize()` would attempt to average the values of every year together into one generic mean, unless you manually measured every column (mean.1990, mean.1991, etc). To be much more efficient, you can use `summarize_all()` to find the mean of every column, which follows the format: `summarize_all(data, function)`.
+
+```{r, echo=TRUE}
+#Find the mean of every year in electric
+summarize_all(electric, mean, na.rm = TRUE)
+```
+
+The warning messages only appear because R also tries to find the mean of **Country Name** and **Country Code**, columns without numeric data and therefore impossible to calculate a mean from. Aside from that, this quite effortlessly gives the mean for every column in the dataset.
+
+**ADVANCED**: It is possible to find multiple summary statistics using `list(function1, function2,...)` in place of the single function name. To ensure that the names can be interpreted, be sure to name the functions in the list like so `summarize_all(.data, list(mean=mean, median=median), na.rm=TRUE))`.
+
+### Exercise 6
+
+Find the standard deviation of every column in **electric** using `summarize_all()`. 
+
+```{r sumall, exercise=TRUE}
+#Find the standard deviation of every year in electric
+
+```
+
+```{r sumall-solution}
+#Find the standard deviation of every year in electric
+summarize_all(electric, sd, na.rm = TRUE)
+```
+
+We are still left with the issue where we might only want to summarize some variables and not others - wouldn't it be nice if we could combine the `select()` function with the `summarize()` or `summarize_all()` function? In the next class, we'll do just that!
+
+
+## **Conclusion & Glossary**
+
+The potential utility of `summarize()` and `summarize_all()` will grow as you learn more functions in the Tidyverse. Not only can you find out basic descriptive statistics of numeric data, but now you can calculate many statistics at once, compare the statistics of every column in a dataset, and make calculations in groups based on other variables. This is a wide, highly practical toolset for approaching statistics in the social sciences. 
+
+Coming up in the next tutorial... we will learn some of the more advanced programming techniques to help you unlock R's full potential. 
+
+### Function Glossary
+
+Here's a recap of the functions you have encountered so far:
+
+**Tutorial 1: R Basics and Assigning Variables**
+
+* Basic mathematics: `+`,`-`,`*`,`/`
+* Logical operators: `==`,`>`,`<`,`>=`,`>=`
+* Assign name: `<-`
+* Create vector: `c()`
+
+**Tutorial 2: Reading and Describing Data**
+
+* Preview data: `head()`
+* Get dimensions: `dim()`
+* Get column names and numbers: `colnames()`
+* Select specific columns: `select()`
+  + `starts_with()`
+  + `ends_with()`
+  + `contains()`
+* Get values of column: `table()`
+* Get proportions of values of column: `prop.table()`
+* Collapse multiple columns into new rows: `gather()`
+* Turn row data into new columns: `spread()`
+
+**Tutorial 3: Intro to Visualization**
+
+* Make crosstabs: `xtabs()`
+* Make graphs: `ggplot()`
+  + Histogram: `geom_histogram()`
+  + Density: geom_density()
+  + Bar graph: `geom_bar()`
+  + Scatterplot: `geom_point()`
+  + Boxplot: `geom_boxplot()`
+  + Violin plot: `geom_violin()`
+  + Smooth line plot: `geom_smooth()`
+
+**Tutorial 4: Advanced Visualization**
+
+* Make crosstabs: `xtabs()`
+* Make graphs: `ggplot()`
+  + Divide plot into subplots: `facet_wrap()`
+* Color observations: `aes(fill =)`
+
+
+**Tutorial 5: Transforming Data**
+
+* Select specific rows: `filter()`
+  + More logical operators: `&`, `|`, `!`
+* Reorder rows: `arrange()`
+* Select first x rows: `slice()`
+* Rename column: `rename()`
+* Recode column values: `recode()`
+* New column: `mutate()`
+* Convert value to NA: `na_if()`
+* Convert NA to value: `replace_na()`
+* Recode with individual arguments: `case_when()`
+
+
+**Tutorial 6: Data Structures**
+
+* Summarize stats for single column: `summarize()`
+* Summarize one stat for all columns: `summarize_all()`
+ + Find mean: `mean()`
+ + Find median: `median()`
+ + Find lowest value: `min()`
+ + Find highest value: `max()`
+ + Find standard deviation: `sd()`
+ + Find variance: `var()`
+ + Find interquartile range: `IQR()`
+* Find variable format info: `str()`
+
+
