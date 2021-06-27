@@ -1,0 +1,110 @@
+---
+title: "Tutorial 9: Vectorization"
+runtime: shiny_prerendered
+output: learnr::tutorial
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(sjlabelled)
+library(tidyverse)
+library(nycflights13)
+knitr::opts_chunk$set(echo = TRUE)
+#tutorial_options(exercise.timelimit = 10)
+```
+
+## **Introduction**
+
+In the previous tutorial, you learned about using for loops to repeat an
+operation in each value in a series of values. In this tutorial, we will
+contrast for loops with an alternative technique, *vectorization*. You
+will learn how to vectorize functions as well as compare the time it
+takes to run functions in R with a technique called *benchmarking*.
+
+We will learn the following R Commands:
+
+<!-- add commands used in tutorial -->
+
+And we will use the following datasets: 
+The `flights` dataset from the R package `nycflights13`, which contains all flights out of New York City in 2013.
+
+## **For loop review**
+
+Let's start off with a review of for loops. To do so, we're going to use the `flights` dataset. 
+
+```{r echo=F}
+head(flights)
+```
+
+In this dataset, each row is an individual flight out of New York City. The column `dep_delay` contains the difference between the scheduled departure and the actual departure time, but in minutes. Now let's say we wanted to convert that to hours. To do so, we would divide each value in `dep_delay` by 60. We can do that using a `for` loop, and store the results in a vector.
+
+First, we store all the departure delays in minutes, in a vector called `delays_mins`(making sure to remove `NA` values for when a delay was not available). The number of delays is calculated using the `length` function, and is stored as `n_delays`. Then, we create the vector `delays_hours_loop` to store the results of our computation, and the `mins_to_hours()` function to actually compute the results. 
+
+```{r}
+delays_mins <- !is.na(flights$dep_time)
+n_delays <- length(delays_mins)
+delays_hours_loop <- vector('numeric',n_flights)
+mins_to_hours <- function(x) x/60
+for(i in 1:n_delays){
+  delays_hours_loop[i] <- mins_to_hours(delays_mins[i])
+}
+```
+
+```{r}
+head(delays_hours)
+```
+The operation worked just fine, and the results are stored in `delays_hours`.
+However, given that there are `r n_flights` observations in this dataset, you may imagine that this many individual function calls can get computationally intensive. Though our current function is fairly simple, you may imagine that with more complex operations, the computation cost will add up fast. The next section will go through an alternative to for loops.
+
+### Placeholder for exercise
+<!-- add an exercise -->
+
+## **Vectorization using the apply family of functions**
+
+Rather than using a for loop, we can *vectorize* our `r mins_to_hours()` function by applying it to all the elements in `flights$dep_time` simultaneously. This is called *vectorizing*, and it's commonly done in Base R using the `apply` family of functions. 
+  
+There are several `apply` functions in R, including `lapply()`, `sapply()`, `vapply()`. They all work by taking an argument `X`, which is a data structure (e.g., vector) containing all the elements to apply a function to. The function is specified with the argument `FUN`. 
+
+### sapply()
+There are some differences between the functions, so we'll start out with the simplest function, `sapply()`. `sapply()` is great here because it automatically simplifies the output to a vector if possible. 
+
+Below we use `sapply()` to perform the `mins_to_hours()` calculation on each elements of `flights$dep_time`, still storing the results in a vector called `delays_hours`. 
+
+```{r}
+delays_hours_sapply <- sapply(delays_mins, mins_to_hours)
+```
+
+Note that the results will be identical between the `for` loop and the `sapply` version, which we can verify below.
+
+```{r}
+unique(delays_hours_loop==delays_hours_sapply)
+```
+
+However, the `sapply` version is both simpler to read and computationally faster. We will get into how to measure this in the *benchmarking* section.
+
+### Place holder for exercise
+
+## **Other apply functions**
+
+### lapply()
+
+### vapply()
+
+## **purrr**
+
+### purr functions
+
+### Placeholder for exercise
+
+## **Benchmarking**
+
+### microbenchmark
+
+### Placeholder for exercise
+
+## **Conclusion & Glossary**
+
+
