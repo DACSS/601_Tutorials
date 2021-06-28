@@ -71,7 +71,7 @@ There are several `apply` functions in R, including `lapply()`, `sapply()`, `vap
 ### sapply()
 There are some differences between the functions, so we'll start out with the simplest function, `sapply()`. `sapply()` is great here because it automatically simplifies the output to a vector if possible. 
 
-Below we use `sapply()` to perform the `mins_to_hours()` calculation on each elements of `flights$dep_time`, still storing the results in a vector called `delays_hours`. 
+Below we use `sapply()` to perform the `mins_to_hours()` calculation on each elements of `flights$dep_time`, still storing the results in a vector called `delays_hours_sapply`. 
 
 ```{r}
 delays_hours_sapply <- sapply(delays_mins, mins_to_hours)
@@ -106,5 +106,4 @@ However, the `sapply` version is both simpler to read and computationally faster
 ### Placeholder for exercise
 
 ## **Conclusion & Glossary**
-
 
