@@ -142,13 +142,11 @@ Notice that here, we didn't even have to write a function. We just performed the
 Now that we know about for loops and vectorization, we can use `microbenchmark` to compare the two. We will use the same example, converting `delays_mins` to hours, using both methods.
 
 ```{r message=F}
-for_loop <- expr(for(i in 1:n_delays){
-  delays_hours_loop[i] <- mins_to_hours(delays_mins[i])
-}) #Using the expr() function to store our function calls in an object
-vectorized <- expr(delays_hours_vectorize <- delays_mins/60)
 results_lv <- microbenchmark(
-  for_loop,
-  vectorized
+  for(i in 1:n_delays){
+  delays_hours_loop[i] <- mins_to_hours(delays_mins[i])
+},
+  delays_hours_vectorize <- delays_mins/60
 )
 summary(results_lv)
 autoplot(results_lv)
@@ -161,7 +159,9 @@ Besides the advantage of being simpler to read, vectorization is clearly faster 
 <!-- add an exercise -->
 
 ## **Vectorization using the apply family of functions**
-Sometimes, you have something more complicated, that can't be performed in a single line of code. So you need to write a function and use it on a vector. 
+Sometimes you have something more complicated, that can't be performed in a single line of code. You can do it in a for loop, or you can use a function from the `apply` family to vectorize it. 
+
+To demonstrate the apply functions, let's start out with a simple example. Let's say we have a vector containing 
 
 There are several `apply` functions in R, including `lapply()`, `sapply()`, `vapply()`. They all work by taking an argument `X`, which is a data structure (e.g., vector) containing all the elements to apply a function to. The function is specified with the argument `FUN`. 
 

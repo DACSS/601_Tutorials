@@ -140,12 +140,12 @@ test_results &lt;- microbenchmark(mean(vec))</code></pre>
 <pre><code>## Rows: 100
 ## Columns: 2
 ## $ expr &lt;fct&gt; mean(vec), mean(vec), mean(vec), mean(vec), mean(vec), mean(vec),…
-## $ time &lt;dbl&gt; 135080, 4110, 2306, 2009, 2366, 2020, 1930, 2103, 2017, 2452, 224…</code></pre>
+## $ time &lt;dbl&gt; 199347, 4727, 2923, 3016, 2398, 2406, 2933, 2449, 2845, 2459, 252…</code></pre>
 <p>We can summarize the results using <code>summary(test_results)</code>.</p>
 <pre class="r"><code>summary(test_results)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["expr"],"name":[1],"type":["fct"],"align":["left"]},{"label":["min"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["median"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["uq"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["max"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["neval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"mean(vec)","2":"1.877","3":"1.9305","4":"3.51906","5":"1.9965","6":"2.0785","7":"135.08","8":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["expr"],"name":[1],"type":["fct"],"align":["left"]},{"label":["min"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["median"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["uq"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["max"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["neval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"mean(vec)","2":"2.345","3":"2.465","4":"5.65892","5":"2.928","6":"4.6875","7":"199.347","8":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>The results here are in a dataframe, showing the expression run, along with its min, mean, median, upper and lower quartiles, and the number of times it was ran. You also get information about what unit the runtime was measured in. Here, it’s microseconds. In this case, the calculation is incredibly fast - the mean runtime was <code>summary(test_results)$mean</code> microseconds.</p>
@@ -160,10 +160,10 @@ test_results &lt;- microbenchmark(mean(vec))</code></pre>
 summary(test_results_2)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["expr"],"name":[1],"type":["fct"],"align":["left"]},{"label":["min"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["median"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["uq"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["max"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["neval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"mean(vec)","2":"1827","3":"1881.5","4":"2240.48","5":"1923","6":"2023.5","7":"27373","8":"100"},{"1":"sum(vec)/length(vec)","2":"485","3":"498.0","4":"644.77","5":"509","6":"525.0","7":"11459","8":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["expr"],"name":[1],"type":["fct"],"align":["left"]},{"label":["min"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["median"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["uq"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["max"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["neval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"mean(vec)","2":"2345","3":"2393","4":"2709.67","5":"2468.5","6":"2681.0","7":"18885","8":"100"},{"1":"sum(vec)/length(vec)","2":"626","3":"646","4":"847.97","5":"661.0","6":"676.5","7":"16353","8":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Here, the results are in nanoseconds. It turns out that using <code>sum()</code> and <code>length()</code> is actually faster than <code>mean()</code>. However, with a difference as trivial as 1595.71 nanoseconds, it’s probably best to use the simple convenience function <code>mean()</code>.</p>
+<p>Here, the results are in nanoseconds. It turns out that using <code>sum()</code> and <code>length()</code> is actually faster than <code>mean()</code>. However, with a difference as trivial as 1861.7 nanoseconds, it’s probably best to use the simple convenience function <code>mean()</code>.</p>
 </div>
 <div id="section-plotting-results" class="section level3">
 <h3>Plotting results</h3>
@@ -212,22 +212,19 @@ delays_hours &lt;- delays_mins/60</code></pre>
 <div id="section-comparing-vectorization-to-loops" class="section level3">
 <h3>Comparing vectorization to loops</h3>
 <p>Now that we know about for loops and vectorization, we can use <code>microbenchmark</code> to compare the two. We will use the same example, converting <code>delays_mins</code> to hours, using both methods.</p>
-<pre class="r"><code>for_loop &lt;- expr(for(i in 1:n_delays){
+<pre class="r"><code>results_lv &lt;- microbenchmark(
+  for(i in 1:n_delays){
   delays_hours_loop[i] &lt;- mins_to_hours(delays_mins[i])
-}) #Using the expr() function to store our function calls in an object
-vectorized &lt;- expr(delays_hours_vectorize &lt;- delays_mins/60)
-results_lv &lt;- microbenchmark(
-  for_loop,
-  vectorized
+},
+  delays_hours_vectorize &lt;- delays_mins/60
 )
 summary(results_lv)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["expr"],"name":[1],"type":["fct"],"align":["left"]},{"label":["min"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["median"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["uq"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["max"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["neval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"for_loop","2":"25","3":"26","4":"63.37","5":"27","6":"27","7":"3623","8":"100"},{"1":"vectorized","2":"26","3":"27","4":"35.36","5":"28","6":"28","7":"793","8":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["expr"],"name":[1],"type":["fct"],"align":["left"]},{"label":["min"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["median"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["uq"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["max"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["neval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"for (i in 1:n_delays) {     delays_hours_loop[i] <- mins_to_hours(delays_mins[i]) }","2":"158429.766","3":"175803.87","4":"183028.763","5":"179896.663","6":"186047.580","7":"267992.827","8":"100"},{"1":"delays_hours_vectorize <- delays_mins/60","2":"816.804","3":"995.72","4":"1231.629","5":"1052.934","6":"1391.547","7":"2526.414","8":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <pre class="r"><code>autoplot(results_lv)</code></pre>
-<pre><code>## Coordinate system already present. Adding new coordinate system, which will replace the existing one.</code></pre>
 <p><img src="601_Vectorization-Benchmarking_files/figure-html/unnamed-chunk-12-1.png" width="624" /></p>
 <p>Besides the advantage of being simpler to read, vectorization is clearly faster than a for loop in this case.</p>
 </div>
@@ -238,7 +235,8 @@ summary(results_lv)</code></pre>
 </div>
 <div id="section-vectorization-using-the-apply-family-of-functions" class="section level2">
 <h2><strong>Vectorization using the apply family of functions</strong></h2>
-<p>Sometimes, you have something more complicated, that can’t be performed in a single line of code. So you need to write a function and use it on a vector.</p>
+<p>Sometimes you have something more complicated, that can’t be performed in a single line of code. You can do it in a for loop, or you can use a function from the <code>apply</code> family to vectorize it.</p>
+<p>To demonstrate the apply functions, let’s start out with a simple example. Let’s say we have a vector containing</p>
 <p>There are several <code>apply</code> functions in R, including <code>lapply()</code>, <code>sapply()</code>, <code>vapply()</code>. They all work by taking an argument <code>X</code>, which is a data structure (e.g., vector) containing all the elements to apply a function to. The function is specified with the argument <code>FUN</code>.</p>
 <div id="section-sapply" class="section level3">
 <h3>sapply()</h3>
