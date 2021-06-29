@@ -26,10 +26,74 @@ takes to run functions in R with a technique called *benchmarking*.
 
 We will learn the following R Commands:
 
-<!-- add commands used in tutorial -->
+• `microbenchmark()`
+<!-- add all commands used in tutorial -->
 
 And we will use the following datasets: 
 The `flights` dataset from the R package `nycflights13`, which contains all flights out of New York City in 2013.
+
+
+## **Benchmarking**
+Before we learn how to compare for loops to vectorization, we need to learn about *benchmarking*. Benchmarking is used to measure the amount of time it takes to perform a computation in R. There are a number of ways to do so, but we will be using the R package [`microbenchmark`](https://cran.r-project.org/web/packages/microbenchmark/).
+
+### microbenchmark
+
+To install `microbenchmark`, run the following code:
+```{r eval=F}
+install.packages('microbenchmark')
+```
+  
+Then to use it, load the library:  
+```{r}
+library(microbenchmark)
+```
+
+We can then use the `microbenchmark()` function to output timing results for a line of R code. Here, let's show how to measure the time it takes to get the mean of a numeric vector.
+
+```{r}
+vec <- runif(100)
+test_results <- microbenchmark(mean(vec))
+```
+
+`microbenchmark` works by running the code many times and calculating the runtime for each calculation. Each individual runtime is stored in `test_results`. Let's take a look at them here:  
+
+```{r}
+glimpse(test_results)
+```
+
+We can summarize the results using `summary(test_results)`. 
+```{r}
+summary(test_results)
+```
+
+The results here are in a dataframe, showing the expression run, along with its min, mean, median, upper and lower quartiles, and the number of times it was ran. You  also get information about what unit the runtime was measured in. Here, it's microseconds.
+In this case, the calculation is incredibly fast - the mean runtime was `summary(test_results)$mean` microseconds.  
+
+### using microbenchmark to compare code
+`microbenchmark's` real power comes from its ability to compare different expressions in R. Let's see if the R function `mean()` is faster than computing it ourselves using the `sum()` and `length()` functions. 
+
+```{r}
+test_results_2 <- microbenchmark(
+  mean(vec),
+  sum(vec)/length(vec)
+)
+summary(test_results_2)
+```
+
+Here, the results are in nanoseconds. It turns out that using `sum()` and `length()` is actually faster than `mean()`. However, with a difference as trivial as `r abs(summary(test_results_2)$mean[1]-summary(test_results_2)$mean[2])` nanoseconds, it's probably best to use the simple convenience function `mean()`.
+
+### Plotting results
+You can even plot the results quite easily, using the `autoplot()` function from `ggplot2`, which automatically draws the plot that works best with the class of object it is given (in this case, it makes a violin plot).
+
+```{r message=F}
+autoplot(test_results_2)
+```
+
+Calculating a mean of `r length(vec)` numbers is a computationally trivial thing to do. However, not all the code you write will be doing something so simple. Next, we will learn how for loops and vectorization compare, and then measure the differences using `microbenchmark`.
+  
+### Placeholder for exercise
+<!-- add in microbenchmark exercise -->
+
 
 ## **For loop review**
 
@@ -58,14 +122,47 @@ head(delays_hours_loop)
 ```
 The operation worked just fine, and the results are stored in `delays_hours_loop`.
 However, given that there are `r n_delays` observations in this dataset, you may imagine that this many individual function calls can get computationally intensive. Though our current function is fairly simple, you may imagine that with more complex operations, the computation cost will add up fast. The next section will go through an alternative to for loops.
+  
+### Placeholder for exercise
+<!-- add an exercise -->
 
+## **Vectorization**
+Rather than using a for loop, we can *vectorize* our conversion of minutes to hours function by applying it to all the elements in `delays_mins` simultaneously. This is called *vectorizing*. Doing so is fairly simple, and it's often faster than a for loop.
+
+We can use our previous example of converting flight delays to hours.
+```{r}
+delays_mins <- !is.na(flights$dep_time)
+delays_hours <- delays_mins/60
+```
+
+Notice that here, we didn't even have to write a function. We just performed the operation by dividing  `delays_mins` by 60 (which automatically performs the division on each element of the vector, i.e. vectorizing). We could have called the `mins_to_hours()` function, but it's not necessary to do so.
+
+### Comparing vectorization to loops
+
+Now that we know about for loops and vectorization, we can use `microbenchmark` to compare the two. We will use the same example, converting `delays_mins` to hours, using both methods.
+
+```{r message=F}
+for_loop <- expr(for(i in 1:n_delays){
+  delays_hours_loop[i] <- mins_to_hours(delays_mins[i])
+}) #Using the expr() function to store our function calls in an object
+vectorized <- expr(delays_hours_vectorize <- delays_mins/60)
+results_lv <- microbenchmark(
+  for_loop,
+  vectorized
+)
+summary(results_lv)
+autoplot(results_lv)
+```
+  
+Besides the advantage of being simpler to read, vectorization is clearly faster than a for loop in this case. 
+  
+  
 ### Placeholder for exercise
 <!-- add an exercise -->
 
 ## **Vectorization using the apply family of functions**
+Sometimes, you have something more complicated, that can't be performed in a single line of code. So you need to write a function and use it on a vector. 
 
-Rather than using a for loop, we can *vectorize* our `mins_to_hours()` function by applying it to all the elements in `flights$dep_time` simultaneously. This is called *vectorizing*, and it's commonly done in Base R using the `apply` family of functions. 
-  
 There are several `apply` functions in R, including `lapply()`, `sapply()`, `vapply()`. They all work by taking an argument `X`, which is a data structure (e.g., vector) containing all the elements to apply a function to. The function is specified with the argument `FUN`. 
 
 ### sapply()
@@ -96,12 +193,6 @@ However, the `sapply` version is both simpler to read and computationally faster
 ## **purrr**
 
 ### purr functions
-
-### Placeholder for exercise
-
-## **Benchmarking**
-
-### microbenchmark
 
 ### Placeholder for exercise
 
