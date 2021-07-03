@@ -65,9 +65,9 @@ summary(test_results)
 ```
 
 The results here are in a dataframe, showing the expression run, along with its min, mean, median, upper and lower quartiles, and the number of times it was ran. You  also get information about what unit the runtime was measured in. Here, it's microseconds.
-In this case, the calculation is incredibly fast - the mean runtime was `summary(test_results)$mean` microseconds.  
+In this case, the calculation is incredibly fast - the mean runtime was `r summary(test_results)$mean` microseconds.  
 
-If you're interested in more specifics of `microbenchmark()`, run `?microbenchmark` or `help("microbenchmark")` in your RStudio console. There are a number of optional arguments to the `microbenchmark()` function, including `times`, which specifies 'the number of times to evaluate the expression, and `unit`, the unit of measurement for the runtime. 
+If you're interested in more specifics of `microbenchmark()`, run `?microbenchmark` or `help("microbenchmark")` in your RStudio console. There are a number of optional arguments to the `microbenchmark()` function, including `times`, which specifies the number of times to evaluate the expression, and `unit`, the unit of measurement for the runtime. 
 
 ### using microbenchmark to compare code
 `microbenchmark's` real power comes from its ability to compare different expressions in R. Let's see if the R function `mean()` is faster than computing it ourselves using the `sum()` and `length()` functions. 
@@ -91,25 +91,24 @@ autoplot(test_results_2)
 
 Calculating a mean of `r length(vec)` numbers is a computationally trivial thing to do. However, not all the code you write will be doing something so simple. Next, we will learn how for loops and vectorization compare, and then measure the differences using `microbenchmark`.
   
-### Placeholder for exercise
 ### Exercise 1
 
-
+Below we create a numeric vector, called `vector_1`.
 ```{r, echo=TRUE}
 vector_1 <- c(5,4,3,1,6,4,3,2,6,4,2,1,5,6,7,3,2,9,5,8,9)
 ```
 
-Above we created a numeric vector, called `vector_1`. Standardize the vector by subtracting the mean of `vector_1` from each score and then dividing by `vector_1`'s standard deviation. Then, use `microbenchmark()` to measure the computation time in \textbf{seconds}, and plot your results.
+ Standardize the vector by subtracting the mean of `vector_1` from each score and then dividing by `vector_1`'s standard deviation. Then, use `microbenchmark()` to measure the computation time in \textbf{seconds}, and plot your results.
 
-```{r xtabs, exercise=TRUE}
+```{r microbenchmark_exercise, exercise=TRUE}
 #standardize vector_1 and use microbenchmark() to measure the computation time.
 
 ```
 
-```{r xtabs-solution, message=F}
-vector_1 <- (vector_1-mean(vector_1))/sd(vector_1)
+```{r microbenchmark_exercise-solution, message=F}
+vector_1_stdize <- (vector_1-mean(vector_1))/sd(vector_1)
 results <- microbenchmark(
-  'standardize'= vector_1 <- (vector_1-mean(vector_1))/sd(vector_1),
+  'standardize'= vector_1_stdize <- (vector_1-mean(vector_1))/sd(vector_1),
   unit='s'
 )
 autoplot(results)
@@ -131,8 +130,8 @@ First, we store all the departure delays in minutes, in a vector called `delays_
 ```{r compute flight delays in hrs with for loop}
 delays_mins <- !is.na(flights$dep_delay) #for simplicity, we remove NA values
 n_delays <- length(delays_mins) #number of delays will equal the length of the vector
-delays_hours_loop <- vector('numeric',n_delays)
-mins_to_hours <- function(x) x/60
+delays_hours_loop <- vector('numeric',n_delays) # to store our results
+mins_to_hours <- function(x) x/60 # custom function to convert minutes to hours
 for(i in 1:n_delays){
   delays_hours_loop[i] <- mins_to_hours(delays_mins[i])
 }
@@ -206,27 +205,27 @@ for(i in 1:length(files)){
 
 Finally, we can use the `dplyr` function `bind_rows()` to bind all the dataframes into one, larger dataframe.
 
-```{r message=F}
+```{r bind rows, message=F}
 dataset <- data %>%
   bind_rows()
 glimpse(dataset)
 ```
+
 
 \textbf{But wait!} There's a simpler (often faster) way to do it, using the `apply` family of functions. 
 
 There are several `apply` functions in R, including `lapply()`, `sapply()`, `vapply()`. They all work by taking an argument `X`, which is a data structure (e.g., vector) containing all the elements to apply a function to. The function is specified with the argument `FUN`. 
 
 ### lapply()
-There are some differences between the functions, so we'll start out with the most common version, `lapply()`. `lapply()` always returns data in the form of a list.
+There are some differences between the functions, so we'll start out with (arguably) the most common version, `lapply()`. `lapply()` always returns data in the form of a list.
 
-Below we use `lapply()` to use the `read_csv()` function on each element of `files`, storing the results in a list called `data1`. 
+Below we use `lapply()` to use the `read_csv()` function on each element of `files`. We then use the `dplyr` function `bind_rows()` to combine the results into one larger dataframe, called `data1`.
 
-```{r message=F}
+```{r read in w/ lapply, message=F}
 data1 <- lapply(files, read_csv) %>% 
   bind_rows()
 glimpse(data1)
 ```
-
 
 In the above code, lapply calls the `read_csv()` function once for each value `files`. Each time it calls `read_csv()`, it uses that particular value in `files` as input to the function. <!-- need better explanation --> 
 
@@ -234,7 +233,7 @@ Note that the results will be identical between the `for` loop and the `lapply` 
 
 However, the `lapply` version is both simpler to read and computationally faster. We can verify this using `microbenchmark`.
 
-```{r message=F} 
+```{r compare for loop to lapply, message=F} 
 files <-list.files()
 result <- microbenchmark(
   'loop'=for(i in 1:length(files)){
@@ -252,9 +251,52 @@ autoplot(result)
 
 ## **Other apply functions**
 
-### lapply()
+There's other apply functions, too. We will briefly go into discussion of a few helpful versions - `sapply()` and `vapply()`
+
+### sapply()
+
+`sapply()` is very similar to `lapply()`, except that it attempts to simplify the result to an atomic vector if possible (whereas `lapply()` always returns a list). Observe the difference below, when we use a trivial example with a custom function that multiplies its input by 3.
+
+```{r lapply vs. sapply}
+triple <- function(x) x*3
+x <- seq(0,10)
+result_lapply <- lapply(x, triple)
+result_sapply <- sapply(x, triple)
+head(result_lapply)
+head(result_sapply)
+```
+
+As you can see, `lapply()` returns a list, whereas `sapply()` was able to simplify the result to an atomic vector. 
 
 ### vapply()
+
+`vapply()` is similar to `sapply`, though it requires a third argument, `FUN.VALUE`, where the user must specify the format that they expect the results to be in. 
+
+Below, we use `numeric(1)` to tell `vapply()` that each time we call the function (that is, for each element of `x`) we expect a `numeric` result of length `1`. `vapply()` ensures that if the computation does not work as we intended, we will not get a result, forcing us to look at our code once more to ensure that it works as we intended.
+```{r vapply}
+vapply(x, triple, numeric(1))
+```
+
+  
+### Exercise 
+
+Below we create a numeric vector, called `vector_3`.
+```{r, echo=TRUE}
+vector_3 <- round(rnorm(50,mean=30,sd=5))
+```
+
+Write a function that takes a single input, `x`. The function squares `x` and then adds 1 to the result. Then, apply the function to each element of vector 3, once using `lapply()` and once using `sapply()`.
+
+```{r lapply, exercise=TRUE}
+
+
+```
+
+```{r lapply-solution, message=F}
+function_1 <- function(x) x^2+1
+lapply(vector_3, function_1)
+sapply(vector_3, function_1)
+```
 
 ## **purrr**
 
