@@ -24,7 +24,10 @@ tutorial_options(exercise.timelimit = 10)
 
 ## **Introduction**
 
+<<<<<<< HEAD
 In this tutorial, you wil learn about `RMarkdown`, a tool for combining R code with written text to create clean, well-formatted documents. You will also learn how to get started with `Git`, a tool for version control, and `Github`, a platform for incorporating version control with `Git` in collaborative projects.
+=======
+In this tutorial, you wil learn about `RMarkdown`, a tool for combining R code with written text to create clean, well-formatted documents. You will also learn how to get started with `Git`, a tool for version control, and `Githhub`, a platform for incorporating version control with `Git` in collaborative projects.
 
 You will also learn some best practices when coding in R, including variable naming and commenting your code.
 
