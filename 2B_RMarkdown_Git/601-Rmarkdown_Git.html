@@ -159,29 +159,30 @@ $(document).ready(function () {
 <p>Here, we will go through an example of using RMarkdown in practice.</p>
 <p>Let’s say we want to show an R beginner how to use R to do arithmetic. We can set up an RMarkdown document to present the material in an aesthetically pleasing way, so the reader is not overwhelmed by a regular R script and can focus on the content.</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-5-1.png" width="624" /></p>
-<p>Looking at our document, we see we have our YAML header, containing information about the title, author, date, and output format.</p>
+<p>Looking at our document, we can see our YAML header, which contains information about the title, author, date, and output format.</p>
 <p>Our setup section is simple. We have no real changes to make to the default document setup, and our code requires no packages, so we have no libraries to load.</p>
-<p>We include an introduction header, as well as four subheaders (for each type of basic arithmetic). Finally, we have a conclusion header.</p>
-<p>Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., <code>arithmetic</code>, <code>subtraction</code>, <code>multiplication</code>, and <code>division</code>). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under. If you want to reference an R function or operator in the text, you can do so using backticks. This creates a different looking font that will let the reader know that this is an R function.</p>
+<p>We include an introduction header, as well as four sub-headers (for each type of basic arithmetic). Finally, we have a conclusion header.</p>
+<p>Within each arithmetic sub-header, we include some plain text and some R code. We even name each of our R code chunks (i.e., <code>arithmetic</code>, <code>subtraction</code>, <code>multiplication</code>, and <code>division</code>). This can make it easier to navigate our code. We can even use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under.</p>
+<p>If you want to reference an R function or operator in the text, you can do so using backticks. This creates a different looking font that will let the reader know that an R function is being referenced. See line 16 for an example of this - note the backticks around the “plus” sign.</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-6-1.png" width="624" /></p>
 <p>Our file itself has a “.Rmd” extension, rather than a “.R” extension. Rmd is a short for RMarkdown. Files with a .R extension are referred to as R scripts, while files with a .Rmd extension are referred to as RMarkdown files.</p>
 <p>To actually create our polished document, we will use the <strong>Knit</strong> button, located neared the top of the page. If there are no issues, we will get a nice-looking html file. Note that RMarkdown requires the file to be saved before knitting.</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-7-1.png" width="624" /></p>
 <p>Wallah! We have a pretty and easily readable document that can be distributed to others.</p>
-<p>You will find that after knitting a file, there is now a .html file in your folder, in addition to the .Rmd file.</p>
+<p>You will find that after knitting a file, there is now a .html file in your folder, in addition to the .Rmd file. The html file is the polished document that can be distributed to others, while Rmd file contains the source code that created the file.</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-8-1.png" width="624" /></p>
 <p>Lastly, make sure to re-knit everytime you make changes to the .Rmd file. The polished document will only reflect the changes of the last time it was knit.</p>
 <div id="section-wrapping-up-rmarkdown" class="section level3">
 <h3><strong>Wrapping up RMarkdown</strong></h3>
 <p>There are numerous ways to customize your RMarkdown files. You can create readable documents, presentations, and even interactive applications! This makes it nearly impossible to include everything about RMarkdown in a single tutorial.</p>
 <p>With that being said, there are numerous helpful resources for using RMarkdown. In particular, the <a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">RMarkdown Cheatsheet</a>, created by RStudio, is an invaluable resource.</p>
-<p>Make sure to also check out Chapters <a href="https://r4ds.had.co.nz/r-markdown.html">27</a>, <a href="https://r4ds.had.co.nz/r-markdown-formats.html">29</a> and <a href="https://r4ds.had.co.nz/r-markdown-workflow.html">30</a> in your textbook, <a href="https://r4ds.had.co.nz/index.html">R for Data Science</a> by Hadley Wickham (available free online). These chapters relate to RMarkdown specifically and are invaluable in understanding the power of using RMarkdown for data science.</p>
+<p>Make sure to also check out Chapters <a href="https://r4ds.had.co.nz/r-markdown.html">27</a>, <a href="https://r4ds.had.co.nz/r-markdown-formats.html">29</a> and <a href="https://r4ds.had.co.nz/r-markdown-workflow.html">30</a> in your textbook, <a href="https://r4ds.had.co.nz/index.html">R for Data Science</a> by Hadley Wickham (available free online). These chapters are invaluable for understanding the power of using RMarkdown for data science.</p>
 <p>Finally, those interested in a more detailed look at RMarkdown can check out <a href="https://bookdown.org/yihui/rmarkdown-cookbook/">The RMarkdown Cook Book</a> by Xie, Dervieux, &amp; Riederer (2021), also available free online.</p>
 </div>
 </div>
 <div id="section-gitgithub" class="section level2">
 <h2><strong>Git/Github</strong></h2>
-<p>Next, you should watch these helpful videos by Hans Quiogue to get started with Git &amp; Github with RStudio. Even if you’re familiar with Git, <strong>please still watch the videos in order</strong>, as you may have not used it with RStudio before.</p>
+<p>Next, you should watch these helpful videos by Hans Quiogue to get started with Git &amp; Github with RStudio. Even if you’re familiar with Git, <strong>please still watch the videos in order</strong>.</p>
 <p><img src="https://www.youtube.com/watch?v=pqWiwcfFz28" /></p>
 <p><img src="https://www.youtube.com/watch?v=we6m-B0ioFk" /></p>
 </div>
@@ -190,40 +191,40 @@ $(document).ready(function () {
 <p>We will wrap up this tutorial with a discussion of best practices when using R for data sciences. While we mainly discuss .R scripts (files with a .R extension), the same practices apply to RMarkdown files (files with a .Rmd extension).</p>
 <div id="section-comments" class="section level3">
 <h3>Comments</h3>
-<p>Comments are made in R using <code>#</code>. R will not evaluate any text after the <code>#</code> on a line of code, so this is a good place to include information about the code.</p>
-<pre class="r"><code>1+1 # this is a comment</code></pre>
+<p>Comments are made in R using <code>#</code>. R will not evaluate any text after the <code>#</code> on a line of code, so comments allow us to include information about our code without crashing our scripts.</p>
+<pre class="r"><code>1+1 # this is a comment. Because it comes after the code, R still evaluates 1+1.</code></pre>
 <pre><code>## [1] 2</code></pre>
-<pre class="r"><code># 3+5 see how R doesn&#39;t evaluate that?</code></pre>
-<p>Comments are useful for explaining your code, writing notes about your code for your collaborators to see, and marking off things that need to be fixed later.</p>
-<p>When writing an R script, it is  that you be thorough with comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments. . Nothing is worse than an under-commented script!</p>
+<pre class="r"><code># 3+5 see how R doesn&#39;t evaluate this?</code></pre>
+<p>Comments are useful for writing notes about your code and marking off things that need to be fixed later.</p>
+<p>When writing an R script, it is <strong>crucial</strong> that you be thorough with comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments. <strong>Be as verbose as possible when commenting</strong>. Nothing is worse than an under-commented script!</p>
 <p>Here’s an example of well commented code:</p>
 <pre class="r"><code># univariate linear regression, hp is predictor, wt is dv
 summary(lm(wt~hp, data=mtcars)) </code></pre>
 </div>
 <div id="section-using-comments-to-store-information-about-the-file" class="section level3">
 <h3>Using comments to store information about the file</h3>
-<p>You should also use comments to store information about the script for any future users (including yourself). In particular, insert a header with the name of the script, the author (you), along with the data of last changes to the file and a brief description of what the code in the file does.</p>
+<p>You should also use comments to store information about the script for any future users (including yourself). In particular, insert a header containing <strong>1)</strong> the name of the script, <strong>2)</strong> the author (you), <strong>3)</strong> the date of last changes to the file, and <strong>4)</strong> a brief description of what the code in the file does.</p>
 <p>Below is an example:</p>
 <pre class="r"><code># data_analysis_exp_1.R
 # data analysis from Experiment 1 from Fall 2020. 
 # linear regression with multiple predictors
 # Sean Conway
 # Last modified - July 2021</code></pre>
-<p>Notice how anyone who opens up this hypothetical file quickly knows exactly  what data the data the file is analyzing,  what analysis was done,  the original author of the code, and  when the code was last modified. These information saves the user invaluable time, so they can focus on the results of the code and/or making any modifications they need to make to the code.</p>
-<p>These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to remember what the code does can be a real headache. A well-commented script with a clear heading can avoid this.</p>
-<p>Lastly, whenever possible, before each section of code, describe the code performs with a few comments.</p>
+<p>Notice how anyone who opens up this hypothetical file quickly knows exactly <strong>1)</strong> what data the data the file is analyzing, <strong>2)</strong> what analysis was done, <strong>3)</strong> the original author of the code, and <strong>4)</strong> when the code was last modified. These information saves the user invaluable time, so they can focus on the results of the code and/or modifying the code as they need.</p>
+<p>These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to figure out what the code does can be a real headache. A well-commented script with a clear heading can prevent such an issue.</p>
+<p>Lastly, whenever possible, before each section of code, describe the task that the code performs with a few comments.</p>
 </div>
 <div id="section-variable-naming" class="section level3">
 <h3>Variable naming</h3>
-<p>When naming variables in R, consistency is crucial. There are several methods of naming variables, including <code>camelCase</code> (no separations between words, first letter of each word capitalized after the first word) and <code>snake_case</code> (underscores separate words). You can also use <code>.</code> to separate words (e.g., <code>my.data.1</code>).</p>
+<p>When naming variables in R, consistency is crucial. There are several methods of naming variables, including <code>camelCase</code> (no separations between words, first letter of each word capitalized following the first word) and <code>snake_case</code> (underscores used to separate words). You can also use <code>.</code> to separate words (e.g., <code>my.data.1</code>).</p>
 <p>Whichever method you choose, please be consistent. Your collaborators will appreciate it, and it will make your code more readable.</p>
 </div>
 <div id="section-politeness-in-scripts" class="section level3">
 <h3>Politeness in Scripts</h3>
 <p>We can all agree that it’s rude to make changes to someone else’s computer without their permission. This also applies to R scripts.</p>
-<p>We sometimes need to run code that makes changes to our own computer (e.g., installing packages, changing the working directory, writing results to new files, etc.). When doing so, it’s crucial that we either do so in the console, or, if it’s necessary to do so in a script, comment out the code so that anyone else running the code doesn’t unwittingly make changes to their computer.</p>
-<p>For example, if you need to install a new R package - do so in the RStudio console. This operation only needs to be done once, and the result is the same regardless of where you run it. So do it in the console.</p>
-<p>It’s often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know  these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results if they like.</p>
+<p>We sometimes need to run code that makes changes to our own computer (e.g., installing packages, changing the working directory, writing results to new files, etc.). When doing so, it’s crucial that we either do so in the console, or, when it’s necessary to do so in a script, comment out the code so that anyone else running the code doesn’t unwittingly make changes to their computer.</p>
+<p>For example, if you need to install a new R package - <strong>do so in the RStudio console</strong>. This operation only needs to be done once, and the result is the same regardless of where you run it. So do it in the console.</p>
+<p>It’s often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know <strong>WHERE</strong> these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results.</p>
 </div>
 </div>
 <div id="section-what-not-to-do" class="section level2">
