@@ -13,6 +13,7 @@ library(grid)
 new_file_window <- readPNG("img/new_rmarkdown_file_window.png")
 rmd_test_file <- readPNG("img/rmarkdown_test_file.png")
 rmd_arith_ex <- readPNG("img/rmarkdown_arith_example.png")
+nav_panel_ex <- readPNG("img/navigation_panel.png")
 rmd_html_ex <- readPNG("img/rmarkdown_example_html.png")
 rmd_folder_ex <- readPNG("img/rmarkdown_folder_example.png")
 knitr_search <- readPNG("img/knitr_search.png")
@@ -24,13 +25,12 @@ tutorial_options(exercise.timelimit = 10)
 
 ## **Introduction**
 
+In this tutorial, you wil learn about `RMarkdown`, a tool for combining R code with written text to create clean, well-formatted, and reproducible documents. You will also learn about `Git`, a tool for version control, and `Github`, an online platform for incorporating version control with `Git` in collaborative projects.
 
-In this tutorial, you wil learn about `RMarkdown`, a tool for combining R code with written text to create clean, well-formatted documents. You will also learn how to get started with `Git`, a tool for version control, and `Githhub`, a platform for incorporating version control with `Git` in collaborative projects.
-
-You will also learn some best practices when coding in R, including variable naming and commenting your code.
+Lastly, you will learn some best practices for coding in R, including variable naming and annotating your code with comments.
 
 ## **Installing `knitr`**
-Before we get started with RMarkdown, we need to make sure we have `knitr` installed - the package that RMarkdown runs on. 
+Before we get started with RMarkdown, we need to make sure that `knitr` is installed. `knitr` is the package that RMarkdown runs on. You will need to open your RStudio desktop application for this.  
 
 If you have not previously installed `knitr`, run the following line of code in your RStudio console.
 
@@ -43,6 +43,8 @@ If you're unsure if you have `knitr` installed, you can always search for it in 
 ```{r echo=F}
 grid.raster(knitr_search)
 ```
+  
+Now that we're all set with `knitr`, we can get to learning about RMarkdown.  
 
 ## **RMarkdown Basics**
 
@@ -57,7 +59,7 @@ To open up an RMarkdown file in RStudio, click `File->New File->RMarkdown`. You 
 grid.raster(new_file_window)
 ```
 
-There are several types of files you can create with RMarkdown. The most common is a document in html format (meaning it can be opened on a web browser), though you can also create a PDF or a Word document. ^[Note: to create a PDF, you need a `Tex` distribution installed on your computer. This is optional. For many purposes, html formatted documents work just fine. Individuals interested in installing `Tex` can see [this link](https://www.latex-project.org/get/#tex-distributions) for details.]
+There are several types of files you can create with RMarkdown. The most common is a document in html format (meaning that it can be opened as a local file on a web browser), though you can also create a PDF or a Word document. ^[Note: to knit RMarkdown files to PDF, you need a `Tex` distribution installed on your computer. Individuals interested in installing `Tex` can see [this link](https://www.latex-project.org/get/#tex-distributions) for details.]
 
 ### Opening a file
 Let's try creating a regular html file. After putting in a title and author, we press OK. The new document then looks something like this:
@@ -65,14 +67,16 @@ Let's try creating a regular html file. After putting in a title and author, we 
 ```{r echo=F}
 grid.raster(rmd_test_file)
 ```
-  
-In lines 1-6, we have our YAML (Yet Another Markup Language) header, where we store important information that will be on our document header, as well as the type of document our file will output (in this case, html).
 
-In lines 8-10, we have our setup section. There are a myriad of ways to set up your document. In our case (the default set up) the only specification is created using `opts_chunk$set(echo=TRUE)`, which tells RMarkdown to "echo" the R code we input throughout the document (i.e., show the code itself, not just its results). If you need to use any outside R packages in your document, you should load them in your setup section (e.g., `library(ggplot2)`).
+### Document setup
+<!-- How much info about document setup to include?-->
+In lines 1-6, we have our YAML (Yet Another Markup Language) header, where we store important information that will be on our document header, as well as the type of document our file will output (in this case, html). Generally speaking, the YAML header stores metadata about our file.
+
+In lines 8-10, we have our setup section. There are a myriad of ways to set up your document. In our case (the default set up) the only specification is created using `opts_chunk$set(echo=TRUE)`, which tells RMarkdown to "echo" the R code we input throughout the document (i.e., show the code itself in addition to its results). If you need to use any outside R packages in your document, you should load them in your setup section (e.g., `library(ggplot2)`).
 
 Every RMarkdown document comes with default text that can (and usually should) be deleted. However, we can examine the default text and see three important types of sections: a header (line 12), some plain text (lines 14-16), and an R code chunk (lines 18-20).
 
-We specify a header with ## followed by our header text. Note that we can include further subheaders by adding more # symbols. The more #s, the smaller the header text.
+We specify a header with ## followed by our header text. Note that we can include further sub-headers by adding more # symbols. The more #s, the smaller the sub-header text.
 
 We can add chunks of code by typing three backticks ("```"), followed "{r}". We can then include as much R code as we want in the chunk (insert more lines as we need). Finally, to end the code chunk we simply type three additional backticks.
 
@@ -80,7 +84,7 @@ We can add chunks of code by typing three backticks ("```"), followed "{r}". We 
 
 Here, we will go through an example of using RMarkdown in practice. 
 
-Let's say we want to show an R beginner how to use R to do arithmetic. We can set up an RMarkdown document to present the material in an aesthetically pleasing way, so the reader can focus on the content. 
+Let's say we want to show an R beginner how to use R to do arithmetic. We can set up an RMarkdown document to present the material in an aesthetically pleasing way, so the reader is not overwhelmed by a regular R script and can focus on the content. 
   
 ```{r echo=F}
 grid.raster(rmd_arith_ex)
@@ -92,11 +96,15 @@ Our setup section is simple. We have no real changes to make to the default docu
   
 We include an introduction header, as well as four subheaders (for each type of basic arithmetic). Finally, we have a conclusion header.
   
-Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., `arithmetic`, `subtraction`, `multiplication`, and `division`). We can then use the navigator on the bottom left to easily find each chunk, if we so desire.
+Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., `arithmetic`, `subtraction`, `multiplication`, and `division`). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under.
+
+```{r echo=F}
+grid.raster(nav_panel_ex)
+```
   
-Our file itself has a ".Rmd" extension, rather than a ".R" extension. Rmd is a short for RMarkdown.
+Our file itself has a ".Rmd" extension, rather than a ".R" extension. Rmd is a short for RMarkdown. Files with a .R extension are referred to as R scripts, while files with a .Rmd extension are referred to as RMarkdown files.
   
-To actually create our document, we will use the **Knit** button, located neared the top of the page. If there are no issues, we will get a nice-looking html file. Note that RMarkdown requires the file to be saved before knitting.
+To actually create our polished document, we will use the **Knit** button, located neared the top of the page. If there are no issues, we will get a nice-looking html file. Note that RMarkdown requires the file to be saved before knitting. 
 
 ```{r echo=F}
 grid.raster(rmd_html_ex)
@@ -110,17 +118,20 @@ You will find that after knitting a file, there is now a .html file in your fold
 grid.raster(rmd_folder_ex)
 ```
   
+Lastly, make sure to re-knit everytime you make changes to the .Rmd file. The polished document will only reflect the changes of the last time it was knit.  
+  
 ### **Wrapping up RMarkdown**
-There are numerous ways to customize your RMarkdown files. You can create readable documents, presentations, and even interactive applications! This makes it hard to include all RMarkdown information in a single tutorial. 
+There are numerous ways to customize your RMarkdown files. You can create readable documents, presentations, and even interactive applications! This makes it nearly impossible to include everything about RMarkdown in a single tutorial. 
 
 With that being said, there are numerous helpful resources for using RMarkdown. In particular, the [RMarkdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf), created by RStudio, is an invaluable resource.
 
-Those interested in a more detailed look at RMarkdown can check out [The RMarkdown Cook Book](https://bookdown.org/yihui/rmarkdown-cookbook/) by Xie, Dervieux, & Riederer.
+Make sure to also check out Chapters [27](https://r4ds.had.co.nz/r-markdown.html), [29](https://r4ds.had.co.nz/r-markdown-formats.html) and [30](https://r4ds.had.co.nz/r-markdown-workflow.html) in your textbook, [R for Data Science](https://r4ds.had.co.nz/index.html) by Hadley Wickham (available free online). These chapters relate to RMarkdown specifically and are invaluable in understanding the power of using RMarkdown for data science.
 
-
+Finally, those interested in a more detailed look at RMarkdown can check out [The RMarkdown Cook Book](https://bookdown.org/yihui/rmarkdown-cookbook/) by Xie, Dervieux, & Riederer (2021), also available free online.
+  
 ## **Git/Github**
 
-Next, you should watch these helpful videos by Hans Quiogue to get started with Git & Github with RStudio. Even if you're familiar with Git, **please still watch the videos**, as you may have not used it with RStudio before.
+Next, you should watch these helpful videos by Hans Quiogue to get started with Git & Github with RStudio. Even if you're familiar with Git, **please still watch the videos in order**, as you may have not used it with RStudio before.
 
 ![](https://www.youtube.com/watch?v=pqWiwcfFz28)
 
@@ -128,13 +139,20 @@ Next, you should watch these helpful videos by Hans Quiogue to get started with 
 
 ## **Best Practices in R**
 
-We will wrap up this tutorial by going through some best practices for coding. While we mainly discuss .R scripts (files with a .R extension), the same practices apply to RMarkdown files (files with a .Rmd extension).
+We will wrap up this tutorial with a discussion of best practices when using R for data sciences. While we mainly discuss .R scripts (files with a .R extension), the same practices apply to RMarkdown files (files with a .Rmd extension).
 
 ### Comments
 
-Comments are made in R using `#`. R will not evaluate any text after the `#`, so this is a good place to include information about the code.
+Comments are made in R using `#`. R will not evaluate any text after the `#` on a line of code, so this is a good place to include information about the code.
 
-When writing an R script, it is important to be very thorough with your comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments.  Be as verbose as possible when commenting. Nothing is worse than an undercommented script!
+```{r}
+1+1 # this is a comment
+# 3+5 see how R doesn't evaluate that?
+```
+  
+Comments are useful for explaining your code, writing notes about your code for your collaborators to see, and marking off things that need to be fixed later.  
+  
+When writing an R script, it is \textbf{crucial} that you be thorough with comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments.  \textbf{Be as verbose as possible when commenting}. Nothing is worse than an under-commented script!
 
 Here's an example of well commented code:  
 ```{r eval=F}
@@ -142,19 +160,26 @@ Here's an example of well commented code:
 summary(lm(wt~hp, data=mtcars)) 
 ```
 
-You also want to include a header with the name of the script, the author (you), along with the data of last changes to the file and a brief description of what the code in the file does.
+### Using comments to store information about the file
+
+You should also use comments to store information about the script for any future users (including yourself). In particular, insert a header with the name of the script, the author (you), along with the data of last changes to the file and a brief description of what the code in the file does.
 
 Below is an example:  
   
 ```{r eval=F}
 # data_analysis_exp_1.R
-# data analysis from experiment 1 from Fall 2020. 
+# data analysis from Experiment 1 from Fall 2020. 
 # linear regression with multiple predictors
 # Sean Conway
 # Last modified - July 2021
 ``` 
   
-These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to remember what the code does can be a real headache. A well-commented script with a clear heading can avoid this. When possible, describe the task that a section of code performs **above the code**, and then also explain what each line does.
+Notice how anyone who opens up this hypothetical file quickly knows exactly 
+\textbf{(1)} what data the data the file is analyzing, \textbf{(2)} what analysis was done, \textbf{(3)} the original author of the code, and \textbf{(4)} when the code was last modified. These information saves the user invaluable time, so they can focus on the results of the code and/or making any modifications they need to make to the code.
+  
+These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to remember what the code does can be a real headache. A well-commented script with a clear heading can avoid this. 
+
+Lastly, whenever possible, before each section of code, describe the code performs with a few comments.
 
 ### Variable naming
   
@@ -170,7 +195,7 @@ We sometimes need to run code that makes changes to our own computer (e.g., inst
 
 For example, if you need to install a new R package - do so in the RStudio console. This operation only needs to be done once, and the result is the same regardless of where you run it. So do it in the console.
 
-It's often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know **WHERE** these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results if they like.
+It's often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know \textbf{WHERE} these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results if they like.
 
 ## What **NOT** to do
 
@@ -183,9 +208,9 @@ grid.raster(what_not_to_do)
 There's several bad practices in the script above.
 
 1. **Modifying someone else's computer**
-    + using `install.packages` and `write_csv` makes changes to the user's computer. 
+    + using `install.packages` and `write_csv` makes changes to the user's computer. This is frowned upon.
 2. **Lack of comments**
-    + The script contains no comments or header. Anyone who opens it will have to discern what the code does by running it or working through the code themselves. 
+    + The script contains no comments or header. Anyone who opens it will have to discern what the code does by running it or reading through the code themselves, which can be time-consuming. 
 3. **Inconsistent variable naming**
     + in line 3, the script uses `snake_case`, while in  line 13, the script uses `camelCase`. This adds to the script's difficulty to understand.
 
@@ -205,7 +230,8 @@ grid.raster(what_not_to_do_fixed)
 ### Other suggestions for best practice
 * When possible, include space between sections of code. This adds to readability.
 * Include a space after the `#` for each comment.
-
+  
+<!--are there any other suggestions to include?-->
 ## **Conclusion & Glossary**
 
 You've now learned about RMarkdown, Git/Github, and best practices for coding in R.

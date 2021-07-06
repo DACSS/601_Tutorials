@@ -13,11 +13,7 @@
 <meta name="progressive" content="false" />
 <meta name="allow-skip" content="false" />
 
-<<<<<<< HEAD
 <title>Tutorial 2B: RMarkdown, Git, and Best Practices</title>
-=======
-<title>Tutorial 2: RMarkdown, Git, and Best Practices</title>
->>>>>>> fdefa0fb2797fc344f8a9bfa1808c99f45e9a992
 
 
 <!-- highlightjs -->
@@ -122,16 +118,17 @@ $(document).ready(function () {
 
 <div id="section-introduction" class="section level2">
 <h2><strong>Introduction</strong></h2>
-<p>In this tutorial, you wil learn about <code>RMarkdown</code>, a tool for combining R code with written text to create clean, well-formatted documents. You will also learn how to get started with <code>Git</code>, a tool for version control, and <code>Githhub</code>, a platform for incorporating version control with <code>Git</code> in collaborative projects.</p>
-<p>You will also learn some best practices when coding in R, including variable naming and commenting your code.</p>
+<p>In this tutorial, you wil learn about <code>RMarkdown</code>, a tool for combining R code with written text to create clean, well-formatted, and reproducible documents. You will also learn about <code>Git</code>, a tool for version control, and <code>Github</code>, an online platform for incorporating version control with <code>Git</code> in collaborative projects.</p>
+<p>Lastly, you will learn some best practices for coding in R, including variable naming and annotating your code with comments.</p>
 </div>
 <div id="section-installing-knitr" class="section level2">
 <h2><strong>Installing <code>knitr</code></strong></h2>
-<p>Before we get started with RMarkdown, we need to make sure we have <code>knitr</code> installed - the package that RMarkdown runs on.</p>
+<p>Before we get started with RMarkdown, we need to make sure that <code>knitr</code> is installed. <code>knitr</code> is the package that RMarkdown runs on. You will need to open your RStudio desktop application for this.</p>
 <p>If you have not previously installed <code>knitr</code>, run the following line of code in your RStudio console.</p>
 <pre class="r"><code>install.packages(&#39;knitr&#39;)</code></pre>
 <p>If you’re unsure if you have <code>knitr</code> installed, you can always search for it in your packages:</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-2-1.png" width="624" /></p>
+<p>Now that we’re all set with <code>knitr</code>, we can get to learning about RMarkdown.</p>
 </div>
 <div id="section-rmarkdown-basics" class="section level2">
 <h2><strong>RMarkdown Basics</strong></h2>
@@ -140,64 +137,81 @@ $(document).ready(function () {
 <h3>Getting Started</h3>
 <p>Let’s get started. To open up an RMarkdown file in RStudio, click <code>File-&gt;New File-&gt;RMarkdown</code>. You should then see a window like this:</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-3-1.png" width="624" /></p>
-<p>There are several types of files you can create with RMarkdown. The most common is a document in html format (meaning it can be opened on a web browser), though you can also create a PDF or a Word document. <a href="#section-fn1" class="footnote-ref" id="section-fnref1"><sup>1</sup></a></p>
+<p>There are several types of files you can create with RMarkdown. The most common is a document in html format (meaning that it can be opened as a local file on a web browser), though you can also create a PDF or a Word document. <a href="#section-fn1" class="footnote-ref" id="section-fnref1"><sup>1</sup></a></p>
 </div>
 <div id="section-opening-a-file" class="section level3">
 <h3>Opening a file</h3>
 <p>Let’s try creating a regular html file. After putting in a title and author, we press OK. The new document then looks something like this:</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-4-1.png" width="624" /></p>
-<p>In lines 1-6, we have our YAML (Yet Another Markup Language) header, where we store important information that will be on our document header, as well as the type of document our file will output (in this case, html).</p>
-<p>In lines 8-10, we have our setup section. There are a myriad of ways to set up your document. In our case (the default set up) the only specification is created using <code>opts_chunk$set(echo=TRUE)</code>, which tells RMarkdown to “echo” the R code we input throughout the document (i.e., show the code itself, not just its results). If you need to use any outside R packages in your document, you should load them in your setup section (e.g., <code>library(ggplot2)</code>).</p>
+</div>
+<div id="section-document-setup" class="section level3">
+<h3>Document setup</h3>
+<!-- How much info about document setup to include?-->
+<p>In lines 1-6, we have our YAML (Yet Another Markup Language) header, where we store important information that will be on our document header, as well as the type of document our file will output (in this case, html). Generally speaking, the YAML header stores metadata about our file.</p>
+<p>In lines 8-10, we have our setup section. There are a myriad of ways to set up your document. In our case (the default set up) the only specification is created using <code>opts_chunk$set(echo=TRUE)</code>, which tells RMarkdown to “echo” the R code we input throughout the document (i.e., show the code itself in addition to its results). If you need to use any outside R packages in your document, you should load them in your setup section (e.g., <code>library(ggplot2)</code>).</p>
 <p>Every RMarkdown document comes with default text that can (and usually should) be deleted. However, we can examine the default text and see three important types of sections: a header (line 12), some plain text (lines 14-16), and an R code chunk (lines 18-20).</p>
-<p>We specify a header with ## followed by our header text. Note that we can include further subheaders by adding more # symbols. The more #s, the smaller the header text.</p>
+<p>We specify a header with ## followed by our header text. Note that we can include further sub-headers by adding more # symbols. The more #s, the smaller the sub-header text.</p>
 <p>We can add chunks of code by typing three backticks (“```”), followed “{r}”. We can then include as much R code as we want in the chunk (insert more lines as we need). Finally, to end the code chunk we simply type three additional backticks.</p>
 </div>
 </div>
 <div id="section-rmarkdown-an-example" class="section level2">
 <h2><strong>RMarkdown: An Example</strong></h2>
 <p>Here, we will go through an example of using RMarkdown in practice.</p>
-<p>Let’s say we want to show an R beginner how to use R to do arithmetic. We can set up an RMarkdown document to present the material in an aesthetically pleasing way, so the reader can focus on the content.</p>
+<p>Let’s say we want to show an R beginner how to use R to do arithmetic. We can set up an RMarkdown document to present the material in an aesthetically pleasing way, so the reader is not overwhelmed by a regular R script and can focus on the content.</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-5-1.png" width="624" /></p>
 <p>Looking at our document, we see we have our YAML header, containing information about the title, author, date, and output format.</p>
 <p>Our setup section is simple. We have no real changes to make to the default document setup, and our code requires no packages, so we have no libraries to load.</p>
 <p>We include an introduction header, as well as four subheaders (for each type of basic arithmetic). Finally, we have a conclusion header.</p>
-<p>Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., <code>arithmetic</code>, <code>subtraction</code>, <code>multiplication</code>, and <code>division</code>). We can then use the navigator on the bottom left to easily find each chunk, if we so desire.</p>
-<p>Our file itself has a “.Rmd” extension, rather than a “.R” extension. Rmd is a short for RMarkdown.</p>
-<p>To actually create our document, we will use the <strong>Knit</strong> button, located neared the top of the page. If there are no issues, we will get a nice-looking html file. Note that RMarkdown requires the file to be saved before knitting.</p>
+<p>Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., <code>arithmetic</code>, <code>subtraction</code>, <code>multiplication</code>, and <code>division</code>). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under.</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-6-1.png" width="624" /></p>
+<p>Our file itself has a “.Rmd” extension, rather than a “.R” extension. Rmd is a short for RMarkdown. Files with a .R extension are referred to as R scripts, while files with a .Rmd extension are referred to as RMarkdown files.</p>
+<p>To actually create our polished document, we will use the <strong>Knit</strong> button, located neared the top of the page. If there are no issues, we will get a nice-looking html file. Note that RMarkdown requires the file to be saved before knitting.</p>
+<p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-7-1.png" width="624" /></p>
 <p>Wallah! We have a pretty and easily readable document that can be distributed to others.</p>
 <p>You will find that after knitting a file, there is now a .html file in your folder, in addition to the .Rmd file.</p>
-<p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-7-1.png" width="624" /></p>
+<p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-8-1.png" width="624" /></p>
+<p>Lastly, make sure to re-knit everytime you make changes to the .Rmd file. The polished document will only reflect the changes of the last time it was knit.</p>
 <div id="section-wrapping-up-rmarkdown" class="section level3">
 <h3><strong>Wrapping up RMarkdown</strong></h3>
-<p>There are numerous ways to customize your RMarkdown files. You can create readable documents, presentations, and even interactive applications! This makes it hard to include all RMarkdown information in a single tutorial.</p>
+<p>There are numerous ways to customize your RMarkdown files. You can create readable documents, presentations, and even interactive applications! This makes it nearly impossible to include everything about RMarkdown in a single tutorial.</p>
 <p>With that being said, there are numerous helpful resources for using RMarkdown. In particular, the <a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">RMarkdown Cheatsheet</a>, created by RStudio, is an invaluable resource.</p>
-<p>Those interested in a more detailed look at RMarkdown can check out <a href="https://bookdown.org/yihui/rmarkdown-cookbook/">The RMarkdown Cook Book</a> by Xie, Dervieux, &amp; Riederer.</p>
+<p>Make sure to also check out Chapters <a href="https://r4ds.had.co.nz/r-markdown.html">27</a>, <a href="https://r4ds.had.co.nz/r-markdown-formats.html">29</a> and <a href="https://r4ds.had.co.nz/r-markdown-workflow.html">30</a> in your textbook, <a href="https://r4ds.had.co.nz/index.html">R for Data Science</a> by Hadley Wickham (available free online). These chapters relate to RMarkdown specifically and are invaluable in understanding the power of using RMarkdown for data science.</p>
+<p>Finally, those interested in a more detailed look at RMarkdown can check out <a href="https://bookdown.org/yihui/rmarkdown-cookbook/">The RMarkdown Cook Book</a> by Xie, Dervieux, &amp; Riederer (2021), also available free online.</p>
 </div>
 </div>
 <div id="section-gitgithub" class="section level2">
 <h2><strong>Git/Github</strong></h2>
-<p>Next, you should watch these helpful videos by Hans Quiogue to get started with Git &amp; Github with RStudio. Even if you’re familiar with Git, <strong>please still watch the videos</strong>, as you may have not used it with RStudio before.</p>
+<p>Next, you should watch these helpful videos by Hans Quiogue to get started with Git &amp; Github with RStudio. Even if you’re familiar with Git, <strong>please still watch the videos in order</strong>, as you may have not used it with RStudio before.</p>
 <p><img src="https://www.youtube.com/watch?v=pqWiwcfFz28" /></p>
 <p><img src="https://www.youtube.com/watch?v=we6m-B0ioFk" /></p>
 </div>
 <div id="section-best-practices-in-r" class="section level2">
 <h2><strong>Best Practices in R</strong></h2>
-<p>We will wrap up this tutorial by going through some best practices for coding. While we mainly discuss .R scripts (files with a .R extension), the same practices apply to RMarkdown files (files with a .Rmd extension).</p>
+<p>We will wrap up this tutorial with a discussion of best practices when using R for data sciences. While we mainly discuss .R scripts (files with a .R extension), the same practices apply to RMarkdown files (files with a .Rmd extension).</p>
 <div id="section-comments" class="section level3">
 <h3>Comments</h3>
-<p>Comments are made in R using <code>#</code>. R will not evaluate any text after the <code>#</code>, so this is a good place to include information about the code.</p>
-<p>When writing an R script, it is important to be very thorough with your comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments. Be as verbose as possible when commenting. Nothing is worse than an undercommented script!</p>
+<p>Comments are made in R using <code>#</code>. R will not evaluate any text after the <code>#</code> on a line of code, so this is a good place to include information about the code.</p>
+<pre class="r"><code>1+1 # this is a comment</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code># 3+5 see how R doesn&#39;t evaluate that?</code></pre>
+<p>Comments are useful for explaining your code, writing notes about your code for your collaborators to see, and marking off things that need to be fixed later.</p>
+<p>When writing an R script, it is  that you be thorough with comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments. . Nothing is worse than an under-commented script!</p>
 <p>Here’s an example of well commented code:</p>
-<pre class="r"><code>summary(lm(wt~hp, data=mtcars)) #univariate linear regression, hp is predictor, wt is dv</code></pre>
-<p>You also want to include a header with the name of the script, the author (you), along with the data of last changes to the file and a brief description of what the code in the file does.</p>
+<pre class="r"><code># univariate linear regression, hp is predictor, wt is dv
+summary(lm(wt~hp, data=mtcars)) </code></pre>
+</div>
+<div id="section-using-comments-to-store-information-about-the-file" class="section level3">
+<h3>Using comments to store information about the file</h3>
+<p>You should also use comments to store information about the script for any future users (including yourself). In particular, insert a header with the name of the script, the author (you), along with the data of last changes to the file and a brief description of what the code in the file does.</p>
 <p>Below is an example:</p>
 <pre class="r"><code># data_analysis_exp_1.R
-# data analysis from experiment 1 from Fall 2020. 
+# data analysis from Experiment 1 from Fall 2020. 
 # linear regression with multiple predictors
 # Sean Conway
 # Last modified - July 2021</code></pre>
-<p>These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to remember what the code does can be a real headache. A well-commented script with a clear heading can avoid this. When possible, describe the task that a section of code performs <strong>above the code</strong>, and then also explain what each line does.</p>
+<p>Notice how anyone who opens up this hypothetical file quickly knows exactly  what data the data the file is analyzing,  what analysis was done,  the original author of the code, and  when the code was last modified. These information saves the user invaluable time, so they can focus on the results of the code and/or making any modifications they need to make to the code.</p>
+<p>These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to remember what the code does can be a real headache. A well-commented script with a clear heading can avoid this.</p>
+<p>Lastly, whenever possible, before each section of code, describe the code performs with a few comments.</p>
 </div>
 <div id="section-variable-naming" class="section level3">
 <h3>Variable naming</h3>
@@ -209,22 +223,22 @@ $(document).ready(function () {
 <p>We can all agree that it’s rude to make changes to someone else’s computer without their permission. This also applies to R scripts.</p>
 <p>We sometimes need to run code that makes changes to our own computer (e.g., installing packages, changing the working directory, writing results to new files, etc.). When doing so, it’s crucial that we either do so in the console, or, if it’s necessary to do so in a script, comment out the code so that anyone else running the code doesn’t unwittingly make changes to their computer.</p>
 <p>For example, if you need to install a new R package - do so in the RStudio console. This operation only needs to be done once, and the result is the same regardless of where you run it. So do it in the console.</p>
-<p>It’s often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know <strong>WHERE</strong> these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results if they like.</p>
+<p>It’s often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know  these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results if they like.</p>
 </div>
 </div>
 <div id="section-what-not-to-do" class="section level2">
 <h2>What <strong>NOT</strong> to do</h2>
 <p>Here’s an example of an R script that uses bad practices:</p>
-<p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-10-1.png" width="624" /></p>
+<p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-12-1.png" width="624" /></p>
 <p>There’s several bad practices in the script above.</p>
 <ol style="list-style-type: decimal">
 <li><strong>Modifying someone else’s computer</strong>
 <ul>
-<li>using <code>install.packages</code> and <code>write_csv</code> makes changes to the user’s computer.</li>
+<li>using <code>install.packages</code> and <code>write_csv</code> makes changes to the user’s computer. This is frowned upon.</li>
 </ul></li>
 <li><strong>Lack of comments</strong>
 <ul>
-<li>The script contains no comments or header. Anyone who opens it will have to discern what the code does by running it or working through the code themselves.</li>
+<li>The script contains no comments or header. Anyone who opens it will have to discern what the code does by running it or reading through the code themselves, which can be time-consuming.</li>
 </ul></li>
 <li><strong>Inconsistent variable naming</strong>
 <ul>
@@ -232,23 +246,15 @@ $(document).ready(function () {
 </ul></li>
 </ol>
 <p>Below is a modification to the script that fixes these bad practices.</p>
-<p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-11-1.png" width="624" /></p>
+<p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-13-1.png" width="624" /></p>
 <ol style="list-style-type: decimal">
 <li><strong>Modifying someone else’s computer</strong>
 <ul>
-<<<<<<< HEAD
 <li><code>install.packages</code> is removed, and <code>write_csv</code> is commented out. The user can still remove the <code>#</code> to run the code if they wish, but this is left up to them.</li>
 </ul></li>
 <li><strong>Lack of comments</strong>
 <ul>
 <li>A number of comments explaining the script are now included. A header was also added.</li>
-=======
-<li><code>install.packages</code> is removed, and <code>write_csv</code> is commented out. The user can still remove the <code>#</code> to run the code if they wish, but this is left up to them</li>
-</ul></li>
-<li><strong>Lack of comments</strong>
-<ul>
-<li>A number of comments explaining the script are now included.A header was also added.</li>
->>>>>>> fdefa0fb2797fc344f8a9bfa1808c99f45e9a992
 </ul></li>
 <li><strong>Inconsistent variable naming</strong>
 <ul>
@@ -261,6 +267,7 @@ $(document).ready(function () {
 <li>When possible, include space between sections of code. This adds to readability.</li>
 <li>Include a space after the <code>#</code> for each comment.</li>
 </ul>
+<!--are there any other suggestions to include?-->
 </div>
 </div>
 <div id="section-conclusion-glossary" class="section level2">
@@ -296,6 +303,7 @@ library(grid)
 new_file_window <- readPNG("img/new_rmarkdown_file_window.png")
 rmd_test_file <- readPNG("img/rmarkdown_test_file.png")
 rmd_arith_ex <- readPNG("img/rmarkdown_arith_example.png")
+nav_panel_ex <- readPNG("img/navigation_panel.png")
 rmd_html_ex <- readPNG("img/rmarkdown_example_html.png")
 rmd_folder_ex <- readPNG("img/rmarkdown_folder_example.png")
 knitr_search <- readPNG("img/knitr_search.png")
@@ -328,7 +336,7 @@ session$onSessionEnded(function() {
 <div class="footnotes">
 <hr />
 <ol>
-<li id="section-fn1"><p>Note: to create a PDF, you need a <code>Tex</code> distribution installed on your computer. This is optional. For many purposes, html formatted documents work just fine. Individuals interested in installing <code>Tex</code> can see <a href="https://www.latex-project.org/get/#tex-distributions">this link</a> for details.<a href="#section-fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="section-fn1"><p>Note: to knit RMarkdown files to PDF, you need a <code>Tex</code> distribution installed on your computer. Individuals interested in installing <code>Tex</code> can see <a href="https://www.latex-project.org/get/#tex-distributions">this link</a> for details.<a href="#section-fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -341,11 +349,7 @@ session$onSessionEnded(function() {
 
 <!-- begin doc-metadata -->
 <div id="doc-metadata">
-<<<<<<< HEAD
 <h2 class="title toc-ignore" style="display:none;">Tutorial 2B: RMarkdown, Git, and Best Practices</h2>
-=======
-<h2 class="title toc-ignore" style="display:none;">Tutorial 2: RMarkdown, Git, and Best Practices</h2>
->>>>>>> fdefa0fb2797fc344f8a9bfa1808c99f45e9a992
 </div>
 <!-- end doc-metadata -->
 
