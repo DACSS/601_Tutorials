@@ -25,11 +25,11 @@ tutorial_options(exercise.timelimit = 10)
 
 ## **Introduction**
 
-In this tutorial, you wil learn about `RMarkdown`, a tool for combining R code with written text to create clean, well-formatted, and reproducible documents. You will also learn about `Git`, a tool for version control, and `Github`, an online platform for incorporating version control with `Git` in collaborative projects.
+In this tutorial, you wil learn about `RMarkdown`, a tool for combining R code with written text to create clean, well-formatted, and reproducible documents. You will also learn about `Git`, a tool for version control, and `Github`, an online platform for incorporating version control with `Git` to collaborative projects.
 
 Lastly, you will learn some best practices for coding in R, including variable naming and annotating your code with comments.
 
-## **Installing `knitr`**
+## **Installing knitr**
 Before we get started with RMarkdown, we need to make sure that `knitr` is installed. `knitr` is the package that RMarkdown runs on. You will need to open your RStudio desktop application for this.  
 
 If you have not previously installed `knitr`, run the following line of code in your RStudio console.
@@ -78,7 +78,7 @@ Every RMarkdown document comes with default text that can (and usually should) b
 
 We specify a header with ## followed by our header text. Note that we can include further sub-headers by adding more # symbols. The more #s, the smaller the sub-header text.
 
-We can add chunks of code by typing three backticks ("```"), followed "{r}". We can then include as much R code as we want in the chunk (insert more lines as we need). Finally, to end the code chunk we simply type three additional backticks.
+We can add chunks of code by typing three backticks ("```"), followed "{r}". We can then include as much R code as we want in the chunk (i.e., insert more lines as we need). Finally, to end the code chunk we simply type three additional backticks.
 
 ## **RMarkdown: An Example**
 
@@ -96,7 +96,7 @@ Our setup section is simple. We have no real changes to make to the default docu
   
 We include an introduction header, as well as four subheaders (for each type of basic arithmetic). Finally, we have a conclusion header.
   
-Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., `arithmetic`, `subtraction`, `multiplication`, and `division`). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under.
+Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., `arithmetic`, `subtraction`, `multiplication`, and `division`). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under. If you want to reference an R function or operator in the text, you can do so using backticks. This creates a different looking font that will let the reader know that this is an R function.
 
 ```{r echo=F}
 grid.raster(nav_panel_ex)

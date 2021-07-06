@@ -118,11 +118,11 @@ $(document).ready(function () {
 
 <div id="section-introduction" class="section level2">
 <h2><strong>Introduction</strong></h2>
-<p>In this tutorial, you wil learn about <code>RMarkdown</code>, a tool for combining R code with written text to create clean, well-formatted, and reproducible documents. You will also learn about <code>Git</code>, a tool for version control, and <code>Github</code>, an online platform for incorporating version control with <code>Git</code> in collaborative projects.</p>
+<p>In this tutorial, you wil learn about <code>RMarkdown</code>, a tool for combining R code with written text to create clean, well-formatted, and reproducible documents. You will also learn about <code>Git</code>, a tool for version control, and <code>Github</code>, an online platform for incorporating version control with <code>Git</code> to collaborative projects.</p>
 <p>Lastly, you will learn some best practices for coding in R, including variable naming and annotating your code with comments.</p>
 </div>
 <div id="section-installing-knitr" class="section level2">
-<h2><strong>Installing <code>knitr</code></strong></h2>
+<h2><strong>Installing knitr</strong></h2>
 <p>Before we get started with RMarkdown, we need to make sure that <code>knitr</code> is installed. <code>knitr</code> is the package that RMarkdown runs on. You will need to open your RStudio desktop application for this.</p>
 <p>If you have not previously installed <code>knitr</code>, run the following line of code in your RStudio console.</p>
 <pre class="r"><code>install.packages(&#39;knitr&#39;)</code></pre>
@@ -151,7 +151,7 @@ $(document).ready(function () {
 <p>In lines 8-10, we have our setup section. There are a myriad of ways to set up your document. In our case (the default set up) the only specification is created using <code>opts_chunk$set(echo=TRUE)</code>, which tells RMarkdown to “echo” the R code we input throughout the document (i.e., show the code itself in addition to its results). If you need to use any outside R packages in your document, you should load them in your setup section (e.g., <code>library(ggplot2)</code>).</p>
 <p>Every RMarkdown document comes with default text that can (and usually should) be deleted. However, we can examine the default text and see three important types of sections: a header (line 12), some plain text (lines 14-16), and an R code chunk (lines 18-20).</p>
 <p>We specify a header with ## followed by our header text. Note that we can include further sub-headers by adding more # symbols. The more #s, the smaller the sub-header text.</p>
-<p>We can add chunks of code by typing three backticks (“```”), followed “{r}”. We can then include as much R code as we want in the chunk (insert more lines as we need). Finally, to end the code chunk we simply type three additional backticks.</p>
+<p>We can add chunks of code by typing three backticks (“```”), followed “{r}”. We can then include as much R code as we want in the chunk (i.e., insert more lines as we need). Finally, to end the code chunk we simply type three additional backticks.</p>
 </div>
 </div>
 <div id="section-rmarkdown-an-example" class="section level2">
@@ -162,7 +162,7 @@ $(document).ready(function () {
 <p>Looking at our document, we see we have our YAML header, containing information about the title, author, date, and output format.</p>
 <p>Our setup section is simple. We have no real changes to make to the default document setup, and our code requires no packages, so we have no libraries to load.</p>
 <p>We include an introduction header, as well as four subheaders (for each type of basic arithmetic). Finally, we have a conclusion header.</p>
-<p>Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., <code>arithmetic</code>, <code>subtraction</code>, <code>multiplication</code>, and <code>division</code>). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under.</p>
+<p>Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., <code>arithmetic</code>, <code>subtraction</code>, <code>multiplication</code>, and <code>division</code>). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under. If you want to reference an R function or operator in the text, you can do so using backticks. This creates a different looking font that will let the reader know that this is an R function.</p>
 <p><img src="601-Rmarkdown_Git_files/figure-html/unnamed-chunk-6-1.png" width="624" /></p>
 <p>Our file itself has a “.Rmd” extension, rather than a “.R” extension. Rmd is a short for RMarkdown. Files with a .R extension are referred to as R scripts, while files with a .Rmd extension are referred to as RMarkdown files.</p>
 <p>To actually create our polished document, we will use the <strong>Knit</strong> button, located neared the top of the page. If there are no issues, we will get a nice-looking html file. Note that RMarkdown requires the file to be saved before knitting.</p>
