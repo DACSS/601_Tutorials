@@ -176,8 +176,9 @@ Below is an example:
 # Last modified - July 2021
 ``` 
   
+
 Notice how anyone who opens up this hypothetical file quickly knows exactly **1)** what data the file is analyzing, **2)** what analysis was done, **3)** the original author of the code, and **4)** when the code was last modified. These information saves the user invaluable time, so they can focus on the results of the code and/or modifying the code as they need.
-  
+
 These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to figure out what the code does can be a real headache. A well-commented script with a clear heading can prevent such an issue. 
   
 Lastly, whenever possible, before each section of code, describe the task that the code performs with a few comments. 
