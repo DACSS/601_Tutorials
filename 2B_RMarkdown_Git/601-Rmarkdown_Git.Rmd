@@ -90,13 +90,15 @@ Let's say we want to show an R beginner how to use R to do arithmetic. We can se
 grid.raster(rmd_arith_ex)
 ```
   
-Looking at our document, we see we have our YAML header, containing information about the title, author, date, and output format.
+Looking at our document, we can see our YAML header, which contains information about the title, author, date, and output format.
   
 Our setup section is simple. We have no real changes to make to the default document setup, and our code requires no packages, so we have no libraries to load.
   
-We include an introduction header, as well as four subheaders (for each type of basic arithmetic). Finally, we have a conclusion header.
+We include an introduction header, as well as four sub-headers (for each type of basic arithmetic). Finally, we have a conclusion header.
   
-Within each arithmetic subheader, we include some plain text and some R code. We even name each of our R code chunks (i.e., `arithmetic`, `subtraction`, `multiplication`, and `division`). This can make it easier to navigate our code, as we can use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under. If you want to reference an R function or operator in the text, you can do so using backticks. This creates a different looking font that will let the reader know that this is an R function.
+Within each arithmetic sub-header, we include some plain text and some R code. We even name each of our R code chunks (i.e., `arithmetic`, `subtraction`, `multiplication`, and `division`). This can make it easier to navigate our code. We can even use the navigator on the bottom left of the panel to see each of our named code chunks, along with the headers they fall under. 
+
+If you want to reference an R function or operator in the text, you can do so using backticks. This creates a different looking font that will let the reader know that an R function is being referenced. See line 16 for an example of this - note the backticks around the "plus" sign. 
 
 ```{r echo=F}
 grid.raster(nav_panel_ex)
@@ -112,7 +114,7 @@ grid.raster(rmd_html_ex)
   
 Wallah! We have a pretty and easily readable document that can be distributed to others. 
 
-You will find that after knitting a file, there is now a .html file in your folder, in addition to the .Rmd file.  
+You will find that after knitting a file, there is now a .html file in your folder, in addition to the .Rmd file. The html file is the polished document that can be distributed to others, while Rmd file contains the source code that created the file.  
 
 ```{r echo=F}
 grid.raster(rmd_folder_ex)
@@ -125,13 +127,13 @@ There are numerous ways to customize your RMarkdown files. You can create readab
 
 With that being said, there are numerous helpful resources for using RMarkdown. In particular, the [RMarkdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf), created by RStudio, is an invaluable resource.
 
-Make sure to also check out Chapters [27](https://r4ds.had.co.nz/r-markdown.html), [29](https://r4ds.had.co.nz/r-markdown-formats.html) and [30](https://r4ds.had.co.nz/r-markdown-workflow.html) in your textbook, [R for Data Science](https://r4ds.had.co.nz/index.html) by Hadley Wickham (available free online). These chapters relate to RMarkdown specifically and are invaluable in understanding the power of using RMarkdown for data science.
+Make sure to also check out Chapters [27](https://r4ds.had.co.nz/r-markdown.html), [29](https://r4ds.had.co.nz/r-markdown-formats.html) and [30](https://r4ds.had.co.nz/r-markdown-workflow.html) in your textbook, [R for Data Science](https://r4ds.had.co.nz/index.html) by Hadley Wickham (available free online). These chapters are invaluable for understanding the power of using RMarkdown for data science.
 
 Finally, those interested in a more detailed look at RMarkdown can check out [The RMarkdown Cook Book](https://bookdown.org/yihui/rmarkdown-cookbook/) by Xie, Dervieux, & Riederer (2021), also available free online.
   
 ## **Git/Github**
 
-Next, you should watch these helpful videos by Hans Quiogue to get started with Git & Github with RStudio. Even if you're familiar with Git, **please still watch the videos in order**, as you may have not used it with RStudio before.
+Next, you should watch these helpful videos by Hans Quiogue to get started with Git & Github with RStudio. Even if you're familiar with Git, **please still watch the videos in order**.
 
 ![](https://www.youtube.com/watch?v=pqWiwcfFz28)
 
@@ -143,16 +145,16 @@ We will wrap up this tutorial with a discussion of best practices when using R f
 
 ### Comments
 
-Comments are made in R using `#`. R will not evaluate any text after the `#` on a line of code, so this is a good place to include information about the code.
+Comments are made in R using `#`. R will not evaluate any text after the `#` on a line of code, so comments allow us to include information about our code without crashing our scripts.
 
 ```{r}
-1+1 # this is a comment
-# 3+5 see how R doesn't evaluate that?
+1+1 # this is a comment. Because it comes after the code, R still evaluates 1+1.
+# 3+5 see how R doesn't evaluate this?
 ```
   
-Comments are useful for explaining your code, writing notes about your code for your collaborators to see, and marking off things that need to be fixed later.  
+Comments are useful for writing notes about your code and marking off things that need to be fixed later.  
   
-When writing an R script, it is \textbf{crucial} that you be thorough with comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments.  \textbf{Be as verbose as possible when commenting}. Nothing is worse than an under-commented script!
+When writing an R script, it is **crucial** that you be thorough with comments. You want anyone to be able to open up your script and get a general idea of what the code does through reading your comments.  **Be as verbose as possible when commenting**. Nothing is worse than an under-commented script!
 
 Here's an example of well commented code:  
 ```{r eval=F}
@@ -162,7 +164,7 @@ summary(lm(wt~hp, data=mtcars))
 
 ### Using comments to store information about the file
 
-You should also use comments to store information about the script for any future users (including yourself). In particular, insert a header with the name of the script, the author (you), along with the data of last changes to the file and a brief description of what the code in the file does.
+You should also use comments to store information about the script for any future users (including yourself). In particular, insert a header containing **1)** the name of the script, **2)** the author (you), **3)** the date of last changes to the file, and **4)** a brief description of what the code in the file does.
 
 Below is an example:  
   
@@ -174,16 +176,15 @@ Below is an example:
 # Last modified - July 2021
 ``` 
   
-Notice how anyone who opens up this hypothetical file quickly knows exactly 
-\textbf{(1)} what data the data the file is analyzing, \textbf{(2)} what analysis was done, \textbf{(3)} the original author of the code, and \textbf{(4)} when the code was last modified. These information saves the user invaluable time, so they can focus on the results of the code and/or making any modifications they need to make to the code.
+Notice how anyone who opens up this hypothetical file quickly knows exactly **1)** what data the data the file is analyzing, **2)** what analysis was done, **3)** the original author of the code, and **4)** when the code was last modified. These information saves the user invaluable time, so they can focus on the results of the code and/or modifying the code as they need.
   
-These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to remember what the code does can be a real headache. A well-commented script with a clear heading can avoid this. 
-
-Lastly, whenever possible, before each section of code, describe the code performs with a few comments.
-
-### Variable naming
+These practices are not only to help others - they are to help you. You may open a script after a year or two, having completely forgotten the code you wrote. When this happens, trying to figure out what the code does can be a real headache. A well-commented script with a clear heading can prevent such an issue. 
   
-When naming variables in R, consistency is crucial. There are several methods of naming variables, including `camelCase` (no separations between words, first letter of each word capitalized after the first word) and `snake_case` (underscores separate words). You can also use `.` to separate words (e.g., `my.data.1`). 
+Lastly, whenever possible, before each section of code, describe the task that the code performs with a few comments. 
+
+### Variable naming 
+  
+When naming variables in R, consistency is crucial. There are several methods of naming variables, including `camelCase` (no separations between words, first letter of each word capitalized following the first word) and `snake_case` (underscores used to separate words). You can also use `.` to separate words (e.g., `my.data.1`). 
 
 Whichever method you choose, please be consistent. Your collaborators will appreciate it, and it will make your code more readable.
 
@@ -191,11 +192,11 @@ Whichever method you choose, please be consistent. Your collaborators will appre
   
 We can all agree that it's rude to make changes to someone else's computer without their permission. This also applies to R scripts.
 
-We sometimes need to run code that makes changes to our own computer (e.g., installing packages, changing the working directory, writing results to new files, etc.). When doing so, it's crucial that we either do so in the console, or, if it's necessary to do so in a script, comment out the code so that anyone else running the code doesn't unwittingly make changes to their computer.
+We sometimes need to run code that makes changes to our own computer (e.g., installing packages, changing the working directory, writing results to new files, etc.). When doing so, it's crucial that we either do so in the console, or, when it's necessary to do so in a script, comment out the code so that anyone else running the code doesn't unwittingly make changes to their computer.
 
-For example, if you need to install a new R package - do so in the RStudio console. This operation only needs to be done once, and the result is the same regardless of where you run it. So do it in the console.
+For example, if you need to install a new R package - **do so in the RStudio console**. This operation only needs to be done once, and the result is the same regardless of where you run it. So do it in the console.
 
-It's often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know \textbf{WHERE} these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results if they like.
+It's often necessary to save results of a data analysis to your computer, such as writing results to a .csv file or saving a .png file of a graph you made. If you do so, run the code in a script (so you know **WHERE** these results came from), but then promptly comment it out. This allows others to run the code without accidentally creating new files on their computer, while still allowing them the option to save the results.
 
 ## What **NOT** to do
 
