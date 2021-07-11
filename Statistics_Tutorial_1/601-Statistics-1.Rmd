@@ -1,0 +1,227 @@
+---
+title: 'Statistics Tutorial 1 - Categorical Data'
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(knitr)
+opts_chunk$set(echo = TRUE)
+tutorial_options(exercise.timelimit = 10)
+```
+
+## **Introduction**
+
+In this tutorial, you will learn about categorical data - when our measurements aren't represented as quantities but as different subsets of a category. 
+
+We will learn the following R Commands:
+
+* `table()`
+* `prop.table()`
+* `pchisq()`
+* `chisq.test()`
+
+## **Categorical Data**
+  
+We call our data **categorical** if it cannot be rank-ordered. That is to say, responses cannot be ordered based on greater/lesser presence of a quantity. For example, say we ask respondents to a survey to give their political affiliation as Republican, Democrat, or Independent. These are qualitative values, so we have to treat them as categories. This is also called **nominal** data.
+  
+You may even have a dataset where a categorical variable has numerical values. For example, a researcher may have coded responses to the "political affiliation" question with numbers: 1 for Republican, 2 for Democrat, and 3 for Independent.
+  
+```{r echo=FALSE}
+set.seed(601)
+sample_data <- tibble(
+  political_affiliation = sample(c(1:3),60,replace = T)
+)
+```
+  
+Here's some (fake) data illustrating this example.
+```{r}
+# (hypothetical) dataset
+# political_affiliation indicates their political affiliation, where 1=republican, 2=democrat, 3=independent
+sample_data
+```
+  
+Despite the fact that 1, 2, and 3 are numbers, they don't represent quantities of `political_affiliation`. They are merely qualitative labels. A respondent with a `political_affiliation` value of 2 does not have "more" political affiliation than a respondent with a `political_affiliation` value of 1. Thus, it would not make sense to treat `political_affiliation` the same way we would a numerical variable (e.g., age, income). So we will use a tool called a **frequency table** to summarize this data.
+  
+### **Frequency tables**
+  
+A frequency table counts the *frequency* with which each individual value occurs. This is called **tabulation**. Let's use a simulated dataset of republicans, democrats, and independents (for ease of visualization, the numerical values are changed to words). 
+  
+```{r echo=F}
+set.seed(602)
+sample_poly_data <- tibble(
+  political_affiliation = sample(c('republican','democrat','independent'),size = 100,replace = TRUE, prob=c(.45,.45,.1))
+)
+```  
+
+```{r}
+sample_poly_data
+```
+
+This data is not very helpful as is. What we want is to get the number of Republicans, Democrats, and Independents in our sample. In other words, we want to see how this variable is *distributed*.   
+We can tabulate all unique values using R's `table()` function. 
+  
+```{r}
+freq_table_poly <- sample_poly_data %>%
+  table()
+freq_table_poly
+```
+
+This summarizes our data nicely, we can see that our sample contains `r freq_table_poly['republican']` Republicans, `r freq_table_poly['democrat']` Democrats, and `r freq_table_poly['independent']` Independents. 
+  
+### **Relative Frequency Tables**
+  
+We can also compute a **relative frequency table**, which computes how often each value occurs compared to other values. Essentially, this gives us proportions for each value.  
+  
+We can do this using R's `prop.table()` function. We can simply pass `freq_table_poly` to this function.
+  
+```{r}
+prop_table_poly <- prop.table(freq_table_poly)
+prop_table_poly
+```
+  
+This tells us that in our sample, Independents are relatively infrequent compared to Republicans and Democrats, making up only `r 100*prop_table_poly['independent']`% of the sample.
+  
+## **Null Hypothesis Significance Testing**
+  
+### **Chi-Square Goodness of Fit**
+  
+```{r}
+freq_table_poly
+```
+Looking at our frequency table, it looks like people are slightly less likely to be Independents than they are to be Republicans or Democrats. We can think about this in terms of probabilities. If there was an "even split" between Republicans, Democrats, and Independents, ~33% of our sample would be Republicans, ~33% would be Democrats, and ~33% would be Independent, because $100\% / 3 = 33.33\%$. However, this does not appear to be the case with our sample.  
+  
+We can use this principle to calculate the frequencies we would expect to observe in our sample, Republicans, Democrats, and Independents were equally common in our sample.
+  
+To figure this out, we first find the number of people in our sample.  
+  
+```{r}
+sample_size = nrow(sample_poly_data)
+```
+  
+Then, we multiply `sample_size` by the proportion of each category we would expect **IF** Republicans, Democrats, and Independents were equally common in our sample.   
+  
+```{r}
+prob <- rep(1/3,3) #because there are 3 categories. 
+expected <- sample_size*prob
+names(expected) <- c('democrat', 'independent', 'republican')
+expected
+freq_table_poly
+```
+  
+When we compare `expected` (the counts we would **expect** if Republicans, Democrats, and Independents were equally common in our sample) to our `freq_table_poly` (the frequencies of Republicans, Democrats, and we actually **observed**), there are clearly some discrepancies. Independents are far less common than Republicans or Democrats.
+  
+Because the reason we study a sample is that we want to learn something about the **population** the sample comes from, we have to ask ourselves - does this data actually allow us to infer that Independents are less common than Republicans/Democrats in the population? In other words, what is the probability that we would have observed this data if all political parties were equally common in the population?
+  
+It turns out there's a statistical test that can give us that information, called the **Chi-Square Goodness of Fit**. The Chi-Square is computed as following.
+$$\chi^{2}=\sum_{i=1}^{N} \frac{(O_{i}-E{i})^{2}}{E_{i}}$$
+  
+Where $i$ is used to index the group (e.g., Democrat, Republican, or Independent), $N$ refers to the total number of categories (i.e., 3 in this case), $O_{i}$ is the observed counts for a category, and $E_{i}$ is the expected counts for a category. 
+  
+Before we actually calculate this statistic, we will first define the **Null and Alternative Hypotheses**. 
+  
+The **null hypothesis** is the hypothesis of **no difference** between groups (generally speaking). We start by assuming the null is true, and determining whether or not there is evidence against it. In our case, the null hypothesis is that all political affiliations are equally likely in the population. We can write this as:  
+  
+$H0: P_{Republican} = P_{Democrat} = P_{Independent}$  
+That is, all probabilities are equal. Statisticians commonly use $H0$ to refer to the null hypothesis and $HA$ to refer to the alternative hypothesis.
+  
+The **alternative hypothesis** is often our research hypothesis. It is the hypothesis that there is a difference between groups.  
+  
+$HA:At\,least\,one\,P_{i}\,is\,different.$.  
+That is, **NOT** all probabilities are equal. We don't define the alternative hypothesis more specifically than that. 
+  
+To calculate the Chi-Square ($\chi^{2}$) statistic, for each category, we subtract the expected counts from the observed counts, square that value, and divide by the expected counts. We then sum the results for each category.
+  
+Below is the calculation in R. Note that this calculation is vectorized, and it is done so on the assumption that the observed and expected counts are in the same order (i.e., Democrat-Democrat, Republican-Republican, etc.).
+  
+```{r}  
+chi_stat_gof <- sum((freq_table_poly-expected)^2/expected)
+chi_stat_gof
+```
+  
+Our $\chi^{2}$ statistic is `r chi_stat_gof`, which doesn't necessarily tell us what we want to know. BUT, we can use this statistic to calculate our **p-value**.  
+  
+P-values are a **very** controversial topic in statistics these days. They are often misinterpreted. A p-value tells us **the probability we would have observed this data if the null hypothesis were true**. Note that the p-value does **NOT** tell you the probability the null hypothesis is true. 
+  
+We can get the p-value for our test using the `pchisq()` function. It requires a few arguments - `q` - the quantile (our $\chi^{2}$ statistic) and `df` - the degrees of freedom (the number of groups minus 1). We also need to tell R that `lower.tail=FALSE`. For reasons beyond the scope of this tutorial, the $\chi^{2}$ distribution is one-sided, so we need to change this argument to `FALSE`.  
+  
+```{r}
+p_value_pol <- pchisq(chi_stat_gof, df=2, lower.tail = FALSE) #3 groups (R, D, I) minus 1 = 2
+p_value_pol
+```
+  
+It looks like our p-value is `r p_value_pol`, indicating that it's very unlikely we would have observed the frequencies we did if the null were true. It's commonplace to reject the null hypothesis whenever our p value is less than .05. We will reject the null in this case, but beware: **Null Hypothesis Significance Testing  is often misused/misinterpreted** (see the end of the tutorial). Again, remember that `r p_value_pol` is **NOT** the probability the null is true. Rather, it is **the probability we would have observed the data if the null were true**.  
+
+Finally, there's actually an easier way to perform the test in R. We can simply give our frequency table (`freq_table_poly`) to the `chisq.test()` function.  
+  
+```{r}
+chisq.test(freq_table_poly)
+```
+  
+The results are the same as above, though the above calculation was done to facilitate conceptual understanding of the material.  
+  
+  
+### **Fisher's Exact Test**
+  
+## **Categorical Data - Multiple variables**
+  
+It's rare that a researcher is interested in only one variable. Rather, they will be interested in multiple variables. For this example, let's use the `mtcars` - *Motor Trend Car Road Tests*, a dataset that comes pre-loaded in R, containing data about various cars from 1974.
+  
+```{r echo=F}
+mtcars <- as_tibble(mtcars)
+mtcars
+```
+  
+Let's say we're interested in two specific variables - `vs` and `am`. `vs` contains data about the shape of each car engine, where a value of 0 indicates that the engine is V-shaped, while a value of 1 indicates that the engine is straight. `am` contains data about each car's transmission, where a value of 0 indicates an automatic transmission, while a value of 1 indicates a manual transmission.
+  
+To make the data easier to look at, we are going to recode these values using dplyr. Specifically, we will use `mutate()` and `case_when()`. Note that this will not change the information contained in the data; it will only make it easier to look at.
+  
+```{r}
+mtcars <- mtcars %>% 
+  mutate(
+    vs_new=case_when(
+      vs==0 ~ "v-shaped",
+      vs==1 ~ "straight"
+      ),
+    am_new=case_when(
+      am==0 ~ "automatic",
+      am==1 ~ "manual"
+    )
+  )
+mtcars %>%
+  select(am_new, vs_new)
+```
+  
+### **Contingency Tables**
+  
+Now that are data is recoded, we can use the `table()` function to tabulate the co-occurence of values between `vs_new` and `am_new`. That is, a *multivariate frequency table* (multivariate simply means what it sounds like: multiple variables). This is also called a cross-tabulation.
+
+Note that the more variables you include, the more difficult a contingency table is to interpret. Typically, contingency tables look at 2 variables, or occasionally 3. A contingency table based on greater than 3 variables will be difficult to interpret (and will likely have small cell counts - see below). 
+  
+You also usually need to specify the variables you give `table()`.  The original dataset, `mtcars`, has `r ncol(mtcars)` variables. Let's see what happens when we try to run the table function on this dataset without specifying the variables we want to cross-tabulate:
+  
+```{r error=T}
+mtcars %>%
+  table()
+```
+  
+As you can see, there are too many elements for R to compute cross-tabs on. So you need to specify a finite number of variables.
+  
+```{r}
+mtcars %>%
+  select(vs_new, am_new) %>%
+  table()
+```
+  
+### **Chi-Square Test of Independence
+
+## **Some Final Thoughts on NHST**
+
+## **Conclusion & Glossary**
+
+  
+
+
+
+
