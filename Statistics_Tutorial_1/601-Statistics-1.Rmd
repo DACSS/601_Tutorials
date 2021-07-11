@@ -58,8 +58,9 @@ sample_poly_data <- tibble(
 ```{r}
 sample_poly_data
 ```
-
+  
 These data are not very helpful as is. What we want is to get the number of Republicans, Democrats, and Independents in our sample. In other words, we want to see how this variable is *distributed*.   
+  
 We can tabulate all unique values using R's `table()` function. 
   
 ```{r}
