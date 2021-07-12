@@ -194,6 +194,27 @@ chisq.test(freq_table_poly)
 ```
   
 The results are the same as above, though the above calculation was done to facilitate conceptual understanding of the material.  
+
+### **Exercise 2**
+
+Using the dataset `mtcars`, perform a chi-square Goodness of Fit test on the frequency table computed in exercise 1.
+  
+```{r}
+freq_tab <- mtcars %>%
+  select(vs) %>%
+  table()
+```
+  
+```{r gof-test, exercise=TRUE}
+# Perform goodness of fit test and use the p-value to reject/not reject the null
+
+```
+
+```{r gof-test-solution}
+# Perform goodness of fit test and use the p-value to reject/not reject the null
+chisq.test(freq_tab)
+# Fail to reject the null, as p-value is above .05.
+```
   
 ## **Categorical Data - Multiple variables**
   
