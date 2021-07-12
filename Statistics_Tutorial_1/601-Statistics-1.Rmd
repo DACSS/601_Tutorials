@@ -337,6 +337,9 @@ However, there is an alternative method to statistical testing that can give res
 
 We've now learned how to perform standard statistical tests on categorical data, as well as how to compute frequency tables for one and two-dimensional data. 
 
+### **References**
+  
+Navarro, D. J. (2015). *Learning Statistics with R: A Tutorial for Psychology Students and Other Beginners*, Version 0.6.   
 
 
 
