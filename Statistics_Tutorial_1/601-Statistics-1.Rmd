@@ -23,11 +23,16 @@ We will learn the following R Commands:
 * `chisq.test()`
 * `fisher.test()`
 
+And we will use the following datasets:
+  
+* A simulated dataset: **sample_poly_data**  
+* Motor Trend Car Road Tests: **mtcars**
+ 
 ## **Categorical Data**
   
-We call our data **categorical** if it cannot be rank-ordered. That is to say, responses cannot be ordered based on greater/lesser presence of a quantity. For example, say we ask respondents to a survey to give their political affiliation as Republican, Democrat, or Independent. These are qualitative values, so we have to treat them as categories. This is also called **nominal** data.
+We call our data **categorical** if it cannot be rank-ordered. By that we mean that responses cannot be ordered based on greater/lesser presence of a quantity. For example, say we ask respondents to a survey to give their political affiliation as Republican, Democrat, or Independent. These are qualitative values, so we have to treat them as categories. This is also called **nominal** data.
   
-You may even have a dataset where a categorical variable has numerical values. For example, a researcher may have coded responses to the "political affiliation" question with numbers: 1 for Republican, 2 for Democrat, and 3 for Independent.
+You may even have a dataset where a categorical variable has values coded as numbers. For example, a researcher may have coded responses to the "political affiliation" question with numbers: 1 for Republican, 2 for Democrat, and 3 for Independent.
   
 ```{r echo=FALSE}
 set.seed(601)
@@ -60,7 +65,7 @@ sample_poly_data <- tibble(
 sample_poly_data
 ```
   
-These data are not very helpful as is. What we want is to get the number of Republicans, Democrats, and Independents in our sample. In other words, we want to see how this variable is *distributed*.   
+These data are not very helpful in their current format. We need to find out how many Republicans, Democrats, and Independents are in our sample. In other words, we want to see how this variable is *distributed*.   
   
 We can tabulate all unique values using R's `table()` function. 
   
@@ -79,11 +84,37 @@ We can also compute a **relative frequency table**, which computes how often eac
 We can do this using R's `prop.table()` function. We can simply pass `freq_table_poly` to this function.
   
 ```{r}
-prop_table_poly <- prop.table(freq_table_poly)
+prop_table_poly <- freq_table_poly %>%
+  prop.table()
 prop_table_poly
 ```
   
 This tells us that in our sample, Independents are relatively infrequent compared to Republicans and Democrats, making up only `r 100*prop_table_poly['independent']`% of the sample.
+
+### **Exercise 1**
+
+Using the dataset `mtcars`, compute a one-way frequency table from the variable `vs` (engine shape), saving it as an object. Then compute a relative frequency table from that object, using the function `prop.table()`.
+  
+```{r}
+head(mtcars)
+```
+  
+```{r one-way-freq-table, exercise=TRUE}
+# Compute freq table with mtcars$vs
+
+```
+
+```{r one-way-freq-table-solution}
+# Compute freq table with mtcars$vs
+
+# tidyverse method
+freq_tab <- mtcars %>%
+  select(vs) %>%
+  table()
+freq_tab
+freq_tab %>%
+  prop.table()
+```
   
 ## **Null Hypothesis Significance Testing**
   
@@ -92,6 +123,7 @@ This tells us that in our sample, Independents are relatively infrequent compare
 ```{r}
 freq_table_poly
 ```
+  
 Looking at our frequency table, it looks like people are slightly less likely to be Independents than they are to be Republicans or Democrats. We can think about this in terms of probabilities. If there was an "even split" between Republicans, Democrats, and Independents, ~33% of our sample would be Republicans, ~33% would be Democrats, and ~33% would be Independent, because $100\% / 3 = 33.33\%$. However, this does not appear to be the case with our sample.  
   
 We can use this principle to calculate the frequencies we would expect to observe in our sample, Republicans, Democrats, and Independents were equally common in our sample.
@@ -114,16 +146,16 @@ freq_table_poly
   
 When we compare `expected` (the counts we would **expect** if Republicans, Democrats, and Independents were equally common in our sample) to our `freq_table_poly` (the frequencies of Republicans, Democrats, and we actually **observed**), there are clearly some discrepancies. Independents are far less common than Republicans or Democrats.
   
-Because the reason we study a sample is that we want to learn something about the **population** the sample comes from, we have to ask ourselves - do these data actually allow us to infer that Independents are less common than Republicans/Democrats in the population? In other words, what is the probability that we would have observed these data if all political parties were equally common in the population?
+Because the reason we study a sample is that we want to learn something about the **population** the sample comes from, we have to ask ourselves - do these data actually allow us to infer that Independents are less common than Republicans/Democrats in the population? In other words, what is the probability that we would have observed these data (or data more extreme) if all political parties were equally common in the population?
   
 It turns out there's a statistical test that can give us that information, called the **Chi-Square Goodness of Fit**. The Chi-Square statistic is computed as following.
 $$\chi^{2}=\sum_{i=1}^{N} \frac{(O_{i}-E{i})^{2}}{E_{i}}$$
   
-Where $i$ is used to index the group (e.g., Democrat, Republican, or Independent), $N$ refers to the total number of categories (i.e., 3 in this case), $O_{i}$ is the observed counts for a category, and $E_{i}$ is the expected counts for a category. 
+Where $i$ is used to index the group (e.g., Democrat, Republican, or Independent), $N$ refers to the total number of categories (3 in this case), $O_{i}$ is the observed counts for a category, and $E_{i}$ is the expected counts for a category. 
   
 Before we actually calculate this statistic, we will first define the **Null and Alternative Hypotheses**. 
   
-The **null hypothesis** is the hypothesis of **no difference** between groups (generally speaking). We start by assuming the null is true, and determining whether or not there is evidence against it. In our case, the null hypothesis is that all political affiliations are equally likely in the population. We can write this as:  
+The **null hypothesis** is the hypothesis of **no difference** between groups (generally speaking). We start by assuming the null is true and then determine whether or not there is evidence against it through the results of our test. In our case, the null hypothesis is that all political affiliations are equally likely in the population. We can write this as:  
   
 $H0: P_{Republican} = P_{Democrat} = P_{Independent}$  
 That is, all probabilities are equal. Statisticians commonly use $H0$ to refer to the null hypothesis and $HA$ to refer to the alternative hypothesis.
@@ -144,7 +176,7 @@ chi_stat_gof
   
 Our $\chi^{2}$ statistic is `r chi_stat_gof`, which doesn't necessarily tell us what we want to know. BUT, we can use this statistic to calculate our **p-value**.  
   
-P-values are a **very** controversial topic in statistics these days. They are often misinterpreted. A p-value tells us **the probability we would have observed these data if the null hypothesis were true**. Note that the p-value does **NOT** tell you the probability the null hypothesis is true. 
+P-values are a **very** controversial topic in statistics these days. They are often misinterpreted. A p-value tells us **the probability we would have observed these data (or data more extreme) if the null hypothesis were true**. Note that the p-value does **NOT** tell you the probability the null hypothesis is true. 
   
 We can get the p-value for our test using the `pchisq()` function. It requires a few arguments - `q` - the quantile (our $\chi^{2}$ statistic) and `df` - the degrees of freedom (the number of groups minus 1). We also need to tell R that `lower.tail=FALSE`. For reasons beyond the scope of this tutorial, the $\chi^{2}$ distribution is one-sided, so we need to change this argument to `FALSE`.  
   
@@ -250,7 +282,7 @@ We could compute the expected frequencies for each cell, but we don't have to. R
 chisq.test(freq_table_mtcars)
 ```
   
-The p-value here is `r chisq.test(freq_table_mtcars)$p.value`, indicating a relatively high probability that we would have observed these data if the null hypothesis were true. We would fail to reject the null hypothesis here, retaining our belief that engine shape and transmission type are unrelated.
+The p-value here is `r chisq.test(freq_table_mtcars)$p.value`, indicating a relatively high probability that we would have observed these data (or data more extreme) if the null hypothesis were true. We would fail to reject the null hypothesis here, retaining our belief that engine shape and transmission type are unrelated.
   
 #### **Assumptions of the Chi-Square Test**
   
@@ -276,7 +308,7 @@ The results here agree with the results from the chi-square test. The p-value is
   
 By this point, you've learned about ways to perform statistical tests on categorical data using **Null Hypothesis Significance Testing (NHST)**. There are many critiques of NHST, both in the way it is used in practice and in the core principles behind the logic of NHST. 
   
-For example, some researchers may collect more data until their p-value falls below the typical rejection criterion of .05. This practice is known as **p-hacking** and can result in the publication of erroneous results. Others have criticized the .05 criterion as being too liberal and suggest that researchers adopt a more conservative threshold (such as .001). One final critique of NHST in practice comes from researchers misinterpreting the definition of a p-value. A p-value does **NOT** give you the probability the null hypothesis is true. Rather, it gives you the probability of observing your data given that the null is true (i.e., $P(Data|Null)$).
+For example, some researchers may collect more data until their p-value falls below the typical rejection criterion of .05. This practice is known as **p-hacking** and can result in the publication of erroneous results. Others have criticized the .05 criterion as being too liberal and suggest that researchers adopt a more conservative threshold (such as .001). One final critique of NHST in practice comes from researchers misinterpreting the definition of a p-value. A p-value does **NOT** give you the probability the null hypothesis is true. Rather, it gives you the probability of observing your data (or data more extreme) given that the null is true (i.e., $P(Data|Null)$).
   
 However, there is an alternative method to statistical testing that can give researchers the probability of the null hypothesis given a set of data ($P(Null|Data)$). This rapidly growing field is known as **Bayesian Statistics**. This is a large topic well beyond the scope of this tutorial, but given a few assumptions, there is a way to get more information out of your data than the traditional NHST method can give you.
   
