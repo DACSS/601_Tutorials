@@ -21,6 +21,7 @@ We will learn the following R Commands:
 * `prop.table()`
 * `pchisq()`
 * `chisq.test()`
+* `fisher.test()`
 
 ## **Categorical Data**
   
@@ -49,7 +50,7 @@ Despite the fact that 1, 2, and 3 are numbers, they don't represent quantities o
 A frequency table counts the *frequency* with which each individual value occurs. This is called **tabulation**. Let's use a simulated dataset of republicans, democrats, and independents (for ease of visualization, the numerical values are changed to words). 
   
 ```{r echo=F}
-set.seed(602)
+set.seed(603)
 sample_poly_data <- tibble(
   political_affiliation = sample(c('republican','democrat','independent'),size = 100,replace = TRUE, prob=c(.45,.45,.1))
 )
@@ -115,7 +116,7 @@ When we compare `expected` (the counts we would **expect** if Republicans, Democ
   
 Because the reason we study a sample is that we want to learn something about the **population** the sample comes from, we have to ask ourselves - do these data actually allow us to infer that Independents are less common than Republicans/Democrats in the population? In other words, what is the probability that we would have observed these data if all political parties were equally common in the population?
   
-It turns out there's a statistical test that can give us that information, called the **Chi-Square Goodness of Fit**. The Chi-Square is computed as following.
+It turns out there's a statistical test that can give us that information, called the **Chi-Square Goodness of Fit**. The Chi-Square statistic is computed as following.
 $$\chi^{2}=\sum_{i=1}^{N} \frac{(O_{i}-E{i})^{2}}{E_{i}}$$
   
 Where $i$ is used to index the group (e.g., Democrat, Republican, or Independent), $N$ refers to the total number of categories (i.e., 3 in this case), $O_{i}$ is the observed counts for a category, and $E_{i}$ is the expected counts for a category. 
@@ -162,9 +163,6 @@ chisq.test(freq_table_poly)
   
 The results are the same as above, though the above calculation was done to facilitate conceptual understanding of the material.  
   
-  
-### **Fisher's Exact Test**
-  
 ## **Categorical Data - Multiple variables**
   
 It's rare that a researcher is interested in only one variable. Rather, they will be interested in multiple variables. For this example, let's use the `mtcars` - *Motor Trend Car Road Tests*, a dataset that comes pre-loaded in R, containing data about various cars from 1974.
@@ -210,18 +208,81 @@ mtcars %>%
 As you can see, there are too many elements for R to compute cross-tabs on. So you need to specify a finite number of variables.
   
 ```{r}
-mtcars %>%
+freq_table_mtcars <- mtcars %>%
   select(vs_new, am_new) %>%
   table()
+freq_table_mtcars
 ```
   
-### **Chi-Square Test of Independence
-
+### **Chi-Square Test of Independence**
+  
+Now that we have our contingency table, we may wonder if there is a relationship between `vs_new` and `am_new`. In other words, is the shape of a car's engine independent from the type of transmission? 
+  
+It turns out that there is a statistical test we can run to test for this, also using the Chi-Square distribution. The test is called the **Chi-Square Test of Independence**. The test works similarly to the Test of Goodness of Fit. In face, the formula is the same:  
+  
+$$\chi^{2}=\sum_{i=1}^{N} \frac{(O_{i}-E{i})^{2}}{E_{i}}$$
+  
+However, the method by which we compute expected frequencies differs slightly. Before we get to that, let's define our null and alternative hypotheses.
+  
+The null hypothesis for the test of independence is simply that the two  variables of interest are unrelated - i.e., independent.  
+  
+$H0: Engine\;shape\; and\; transmission\; type\; are\; independent\; of\; one\; another.$  
+  
+The alternative hypothesis states that the two variables of interested **ARE** related - i.e., not independent.
+  
+$HA: Engine\;shape\; and\; transmission\; type\; are\;not\; independent\; of\; one\; another.$   
+  
+The last thing to do before performing the test is define the method by which we calculate expected frequencies.  
+  
+The formula for expected frequencies for a given cell is the following:
+  
+$$\frac{RowTotal*ColumnTotal}{TotalCounts}$$  
+  
+```{r}
+freq_table_mtcars
+```
+  
+We can work through each cell to demonstrate this. Let's work through the first cell, with a `vs_new` value of "straight" and an `am_new` value of "automatic". The row total for this cell is $7+7=14$, and the column total for this cell is $7+12=19$. The total counts is simply the total number of observations in the table, $7+7+12+6=32$. So the expected counts for the first cell is $$\frac{19*14}{32}=8.3125$$.  
+  
+We could compute the expected frequencies for each cell, but we don't have to. R can do it for us and output the results of the test when we use the `chisq.test()` function. We simply pass the contingency table `freq_table_mtcars` to the function and R knows that we want to perform a chi-square test of independence.
+  
+```{r}
+chisq.test(freq_table_mtcars)
+```
+  
+The p-value here is `r chisq.test(freq_table_mtcars)$p.value`, indicating a relatively high probability that we would have observed these data if the null hypothesis were true. We would fail to reject the null hypothesis here, retaining our belief that engine shape and transmission type are unrelated.
+  
+#### **Assumptions of the Chi-Square Test**
+  
+We haven't discussed it yet, but the chi-square test relies on two assumptions that need to be met to have confidence in the results of the test. 
+  
+1. Sufficiently large expected counts 
+  + Each cell needs to have expected counts > 5.
+2. Data are independent of one another. 
+  
+While we have met the assumptions of the test in this case, there will be instances where these assumptions will not be met. In particular, there are times when cell counts will be too small for a chi-square test. In these cases, we can use **Fisher's Exact Test**.
+  
+### **Fisher's Exact Test**
+  
+Fisher's Exact Test relies on a different distribution than the chi-square test. The details of this are unimportant here. However, we can still use the Fisher's Exact Test to test the independence of `vs_new` and `am_new` in the `mtcars` dataset. All we need to do is pass the table `freq_table_mtcars` to the R function `fisher.test()`, and we will have a result.
+  
+```{r}
+fisher.test(freq_table_mtcars)
+```
+  
+The results here agree with the results from the chi-square test. The p-value is relatively high, forcing us to fail to reject the null and retain our belief in the independence of these two variables.  
+  
 ## **Some Final Thoughts on NHST**
-
+  
+By this point, you've learned about ways to perform statistical tests on categorical data using **Null Hypothesis Significance Testing (NHST)**. There are many critiques of NHST, both in the way it is used in practice and in the core principles behind the logic of NHST. 
+  
+For example, some researchers may collect more data until their p-value falls below the typical rejection criterion of .05. This practice is known as **p-hacking** and can result in the publication of erroneous results. Others have criticized the .05 criterion as being too liberal and suggest that researchers adopt a more conservative threshold (such as .001). One final critique of NHST in practice comes from researchers misinterpreting the definition of a p-value. A p-value does **NOT** give you the probability the null hypothesis is true. Rather, it gives you the probability of observing your data given that the null is true (i.e., $P(Data|Null)$).
+  
+However, there is an alternative method to statistical testing that can give researchers the probability of the null hypothesis given a set of data ($P(Null|Data)$). This rapidly growing field is known as **Bayesian Statistics**. This is a large topic well beyond the scope of this tutorial, but given a few assumptions, there is a way to get more information out of your data than the traditional NHST method can give you.
+  
 ## **Conclusion & Glossary**
 
-  
+We've now learned how to perform standard statistical tests on categorical data, as well as how to compute frequency tables for one and two-dimensional data. 
 
 
 
