@@ -1,0 +1,202 @@
+---
+title: 'Statistics Tutorial 2 - Numerical Data'
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(knitr)
+opts_chunk$set(echo = TRUE)
+tutorial_options(exercise.timelimit = 10)
+```
+## **Introduction**
+
+In this tutorial, you will learn about numerical data - when our measurements are represented as quantities.
+
+We will use the following R Commands:
+
+* `mean()`
+* `median()`
+* `sd()`
+* `var()`
+* `rnorm()`
+* `geom_histogram()`
+
+We will use the following dataset:  
+  
+* `mtcars` - *Motor Trend Car Road Tests*, a dataset that comes preloaded in R, containing data about various cars from 1974.
+
+```{r echo=F}
+mtcars <- as_tibble(mtcars)
+mtcars 
+```
+
+## **Numerical Data**
+  
+Let's start out by discussing numerical data, where our measurements can be represented as quantities.
+  
+### Discrete and Continuous Data
+There are two main distinct categories of numerical data: **discrete data** (in which there are no intermediate values between two numbers) and **continuous data** (in which decimal values allow there to be infinitely many values between two numbers).
+  
+The number of children in a household is a common example of discrete data. A household can have 1 or 2 children, but they cannot have 1.5 children. 
+  
+Temperature is a common example of continuous data. A room can be 70 degrees Fahrenheit, or 70.01 or 70.001...and so on. There are infinitely many values between 70.01 & 70.001. We often "bin" continuous data when visualizing or analyzing it. By that, we mean that we group ranges of values together. For example, we may group all values from 70-75 together when visualizing the daily temperatures experienced in Massachusetts during a summer.
+  
+In `mtcars`, the column `wt`, which contains the weight of each vehicle (in tons) is a good example of a continuous numerical variable. The column `cyl`, which contains the number of cylinders in each vehicle's engine, is a good example of a discrete numerical variable.  
+
+Let's take a look at these two columns.  
+  
+```{r}
+mtcars %>%
+  select(wt, cyl) 
+```
+  
+The decimal values in `wt` indicate the continuous nature of the data. There can be a car that weighs 3.01 tons, or 3.001 tons, and so on...On the other hand, `cyl` is clearly discrete - a car engine cannot have half of a cylinder. 
+  
+### Numerical Data - Ordinal vs. Interval vs. Ratio
+
+Researchers commonly make a distinction between **interval** data, which lacks a true zero, and **ratio** data, which does have a true zero. When data are measured on a ratio scale, a value of 0 indicates a **true absence** of the quantity being measured. Income is an example of ratio data, as it is possible to earn $0 in a fiscal year. This is not true for interval data. For example, a temperature of 0 degrees Fahrenheit does not indicate the absence of temperature - its position is arbitrary. Therefore, temperature is measured on an interval scale. 
+  
+There's one more type of numerical data to discuss: **ordinal data**. While ordinal, interval, and ratio data are all rank-ordered (i.e., higher values indicate higher amounts of the quantity being measured), ordinal data **does not assume equal distance between values**. Ordinal data also has no true zero.
+  
+For example, you've probably filled out a survey where you were asked to rate your satisfaction with a product on a scale from 1-10. While a response of 5 indicates greater satisfaction than a response of 4, there is no way to know that the the difference between 5 and 4 is the same as the difference between 4 and 3 when you're dealing with ordinal data. These are convenient values that attempt measure something approximately but are in no way as precise as measuring temperature with a thermometer.
+
+**To summarize:**  
+  
+* Ordinal data 
+    + rank ordered, can't assume equal distance between values, have no true zero.
+* Interval data 
+    + rank ordered, can assume equal distance between values, have no true zero.
+* Ratio data 
+    + rank ordered, can assume equal distance between values, have a true zero.
+
+## Descriptive statistics - Central tendency
+  
+Now we will discuss computing *descriptive statistics* for numerical data. Descriptive statistics are exactly what they sound like - *statistics* that *describe* our sample. They are numerical summaries that convey basic information about  our sample of data.
+  
+### Central tendency
+  
+Central tendency is a statistic that describes the center of a distribution of data. The most common measures are the mean, median, and mode. Let's start out by discussing the mean.
+  
+#### Mean
+  
+The arithmetic mean (colloquially referred to as the average) is the sum of all values in a set of data, divided by the number of values in the data.  
+  
+Let's compute the mean weight of the cars in the `mtcars` dataset.  
+  
+```{r}
+# Base R method  
+#sum adds up all the values, and length gives us the total number of values in the vector
+sum(mtcars$wt)/length(mtcars$wt)  
+
+# Tidyverse method - same operations, but using dplyr syntax
+select(mtcars, wt) %>%
+  summarise(mean_weight=sum(.)/n())
+```
+  
+However, there's an easier way to do it in R. Rather than compute it ourselves, we can have R do it for us using the built-in function `mean()`.  
+  
+```{r}
+# Base R method
+mean(mtcars$wt) 
+
+# Tidyverse method
+mtcars %>%
+  summarise(mean_weight=mean(wt))
+help(mean)
+```
+  
+#### Median  
+The mean isn't the only statistic we can use to describe numerical data. We can also compute the median, which is the center-most value when all value in the dataset are arranged in order. For example, in the vector `x <- c(1,3,5,6,7)`, the number in the middle is 5, so the median is 5. 
+  
+In the case that there are an even number of values (and therefore, **two** center-most values), the median is the average of the two. For example, in the vector `y <- c(1,1,2,3,5,6)`, both 2 & 3 are the center-most values, so the median is the average of 2 & 3 (2.5).
+  
+We can also use a convenience function in R to compute the median, (i.e., `median()`).
+```{r}
+# Base R
+median(mtcars$wt)
+# Tidyverse
+mtcars %>%
+  summarise(median_wt=median(wt))
+```
+  
+Notice that the median and the mean are very similar here. The mean car weight is `r mean(mtcars$wt)` tons, while the median car weight is `r median(mtcars$wt)`. This is because the data are not particularly skewed here. We can verify this with a histogram of the car weights.  
+
+```{r message=F}
+ggplot(mtcars, aes(wt))+
+  geom_histogram(binwidth = .5,col='black',fill='gray')
+```
+  
+But what exactly does "skew" mean? For this, we'll need to go into more detail about visualizing numerical data.  
+  
+## **Visualizing Numerical Data**
+  
+```{r echo=F}
+set.seed(230344)
+n <- 200
+symmetric <- rnorm(n, 75, 15)
+right_skew <- symmetric - c(rep(0,10),rep(70,180),rep(0,10))
+left_skew <- abs(200-right_skew)
+sample_data <- tibble(
+  symmetric=symmetric,
+  right_skew=right_skew,
+  left_skew=left_skew
+) %>%
+  pivot_longer(
+    cols=c(symmetric,right_skew,left_skew),
+    names_to = "distribution",
+    values_to = "value"
+  ) 
+ggplot(sample_data, aes(value))+
+  geom_histogram(binwidth = 10,fill='gray',col='black')+
+  facet_wrap(distribution~., scales = 'free_x')
+```
+  
+### **Understanding the shape of our data**
+  
+Researchers often like to create histograms after collecting data measured on a continuous scale. Histograms "bin" values - group values within specific ranges together - and show the frequency with which each bin occurs. Here's an example, using randomly sampled data.
+  
+```{r}
+# setting the seed can be useful for reproducing code results when simulation is involved
+set.seed(10000) 
+data <- tibble(
+  value=rnorm(100,100,20)
+)
+ggplot(data, aes(x=value))+
+  geom_histogram(binwidth = 10,col='black',fill='white')
+```
+  
+We randomly sample data from a normal distribution with a mean of 20 and a standard deviation of 15. Then, we create a histogram from these data, with a bin width of 10. This indicates that each bar spans 10 values. We then see the frequency with which each bin occurs. The bin centered around 100 has the highest count, which makes sense because we sampled from a distribution with a mean of 100.
+  
+There's one other crucial thing to point out about this data: it's (approximately) **symmetrical**. That is to say, there's essentially an equal amount of data on either side of the mean.   
+  
+However, sometimes our data will be skewed. By this we mean, there is a long "tail" of values on one side of the distribution that can affect the way we interpret and summarize our data. 
+  
+Below is an example of symmetric, left, and right-skewed data.
+```{r echo=F}
+ggplot(sample_data, aes(value))+
+  geom_histogram()+
+  facet_wrap(.~distribution)
+```
+  
+Looking at our left-skewed data, we see a long tail going out to the left. on the other hand, when we look at our right-skewed data, we see a long tail going out to the right. Finally, the symmetric data is essentially the same on either side.Let's see how this affects our calculation of the mean and median.
+  
+```{r}
+# left-skewed data - mean & median
+sample_data %>%
+  group_by(distribution) %>%
+  summarise(
+    mean=mean(value),
+    median=median(value)
+  )
+```  
+  
+Our summarized data can be used to show how skew affects the mean and median. The symmetric distribution has a mean and median that are nearly identical. On the other hand, the left and right-skewed distributions show some discrepancies between mean and median. 
+  
+When we look at the right skewed histogram, the center of the data appears to be somwhere around 5-7, which the median confirms. However, the mean is actually much higher, with a value of 12. This is because the skewed values "pull" the mean away from we might think to be the center of the data. If we had blindly calculated the mean without taking a look at our data, we would have come away with a much different idea of the data's central tendency.
+  
+The same thing occurs with our left-skewed data. The median is 193, while the mean (188) is pulled towards the longer left tail. 
+  
+To summarise: it's crucial to visually examine your data. If your data exhibits any sort of skew, it's best to use the median as a measure of central tendency. Otherwise, the mean is usually preferred.
