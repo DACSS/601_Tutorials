@@ -123,10 +123,16 @@ $(document).ready(function () {
 <ul>
 <li><code>mean()</code></li>
 <li><code>median()</code></li>
+<li><code>select()</code></li>
+<li><code>summarise()</code></li>
+<li><code>max()</code></li>
+<li><code>min()</code></li>
+<li><code>IQR()</code></li>
 <li><code>sd()</code></li>
 <li><code>var()</code></li>
 <li><code>rnorm()</code></li>
 <li><code>geom_histogram()</code></li>
+<li><code>facet_wrap()</code></li>
 </ul>
 <p>We will use the following dataset:</p>
 <ul>
@@ -161,7 +167,7 @@ $(document).ready(function () {
 <h3>Numerical Data - Ordinal vs. Interval vs. Ratio</h3>
 <p>Researchers commonly make a distinction between <strong>interval</strong> data, which lacks a true zero, and <strong>ratio</strong> data, which does have a true zero. When data are measured on a ratio scale, a value of 0 indicates a <strong>true absence</strong> of the quantity being measured. Income is an example of ratio data, as it is possible to earn $0 in a fiscal year. This is not true for interval data. For example, a temperature of 0 degrees Fahrenheit does not indicate the absence of temperature - its position is arbitrary. Therefore, temperature is measured on an interval scale.</p>
 <p>There’s one more type of numerical data to discuss: <strong>ordinal data</strong>. While ordinal, interval, and ratio data are all rank-ordered (i.e., higher values indicate higher amounts of the quantity being measured), ordinal data <strong>does not assume equal distance between values</strong>. Ordinal data also has no true zero.</p>
-<p>For example, you’ve probably filled out a survey where you were asked to rate your satisfaction with a product on a scale from 1-10. While a response of 5 indicates greater satisfaction than a response of 4, there is no way to know that the the difference between 5 and 4 is the same as the difference between 4 and 3 when you’re dealing with ordinal data. These are convenient values that attempt measure something approximately but are in no way as precise as measuring temperature with a thermometer.</p>
+<p>For example, you’ve probably filled out a survey where you were asked to rate your satisfaction with a product on a scale from 1-10. While a response of 5 indicates greater satisfaction than a response of 4, there is no way to know if the the difference between 5 and 4 is the same as the difference between 4 and 3. These are convenient values that attempt measure satisfication approximately but are in no way as precise as measuring temperature with a thermometer.</p>
 <p><strong>To summarize:</strong></p>
 <ul>
 <li>Ordinal data
@@ -184,7 +190,21 @@ $(document).ready(function () {
 <p>Now we will discuss computing <em>descriptive statistics</em> for numerical data. Descriptive statistics are exactly what they sound like - <em>statistics</em> that <em>describe</em> our sample. They are numerical summaries that convey basic information about our sample of data.</p>
 <div id="section-central-tendency" class="section level3">
 <h3>Central tendency</h3>
-<p>Central tendency is a statistic that describes the center of a distribution of data. The most common measures are the mean, median, and mode. Let’s start out by discussing the mean.</p>
+<p>Central tendency is a statistic that describes the center of a distribution of data. The most common measures are the mean, median, and mode. Let’s start out by discussing the mode.</p>
+<div id="section-mode" class="section level4">
+<h4>Mode</h4>
+<p>The mode is the value that is most frequent in a dataset. For example, in the following data, ‘2’ is the most common value, and therefore the mode.</p>
+<pre class="r"><code>data &lt;- c(1,2,2,2,5,6,3,2,2,1,2,2)</code></pre>
+<p>R does not have a function for computing the mode, so if we wish to do so, we must write one ourselves.</p>
+<pre class="r"><code>compute_mode &lt;- function(x){
+  mode_index &lt;- which.max(table(x))
+  mode &lt;- x[mode_index]
+  return(mode)
+}
+compute_mode(data)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>The mode is a less frequently used measure of central tendency. Furthermore, when data are continuous, it’s unlikely that a single mode will even exist. The mode is best used for categorical data (or occasionally discrete numerical data), so it will not be discussed further in this tutorial.</p>
+</div>
 <div id="section-mean" class="section level4">
 <h4>Mean</h4>
 <p>The arithmetic mean (colloquially referred to as the average) is the sum of all values in a set of data, divided by the number of values in the data.</p>
@@ -234,14 +254,13 @@ mtcars %&gt;%
 <p>Notice that the median and the mean are very similar here. The mean car weight is 3.21725 tons, while the median car weight is 3.325. This is because the data are not particularly skewed here. We can verify this with a histogram of the car weights.</p>
 <pre class="r"><code>ggplot(mtcars, aes(wt))+
   geom_histogram(binwidth = .5,col=&#39;black&#39;,fill=&#39;gray&#39;)</code></pre>
-<p><img src="601--Statistics-2_files/figure-html/unnamed-chunk-6-1.png" width="624" /></p>
+<p><img src="601--Statistics-2_files/figure-html/unnamed-chunk-8-1.png" width="624" /></p>
 <p>But what exactly does “skew” mean? For this, we’ll need to go into more detail about visualizing numerical data.</p>
 </div>
 </div>
 </div>
 <div id="section-visualizing-numerical-data" class="section level2">
 <h2><strong>Visualizing Numerical Data</strong></h2>
-<p><img src="601--Statistics-2_files/figure-html/unnamed-chunk-7-1.png" width="624" /></p>
 <div id="section-understanding-the-shape-of-our-data" class="section level3">
 <h3><strong>Understanding the shape of our data</strong></h3>
 <p>Researchers often like to create histograms after collecting data measured on a continuous scale. Histograms “bin” values - group values within specific ranges together - and show the frequency with which each bin occurs. Here’s an example, using randomly sampled data.</p>
@@ -252,14 +271,12 @@ data &lt;- tibble(
 )
 ggplot(data, aes(x=value))+
   geom_histogram(binwidth = 10,col=&#39;black&#39;,fill=&#39;white&#39;)</code></pre>
-<p><img src="601--Statistics-2_files/figure-html/unnamed-chunk-8-1.png" width="624" /></p>
+<p><img src="601--Statistics-2_files/figure-html/unnamed-chunk-10-1.png" width="624" /></p>
 <p>We randomly sample data from a normal distribution with a mean of 20 and a standard deviation of 15. Then, we create a histogram from these data, with a bin width of 10. This indicates that each bar spans 10 values. We then see the frequency with which each bin occurs. The bin centered around 100 has the highest count, which makes sense because we sampled from a distribution with a mean of 100.</p>
 <p>There’s one other crucial thing to point out about this data: it’s (approximately) <strong>symmetrical</strong>. That is to say, there’s essentially an equal amount of data on either side of the mean.</p>
 <p>However, sometimes our data will be skewed. By this we mean, there is a long “tail” of values on one side of the distribution that can affect the way we interpret and summarize our data.</p>
-<p>Below is an example of symmetric, left, and right-skewed data.</p>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="601--Statistics-2_files/figure-html/unnamed-chunk-9-1.png" width="624" /></p>
-<p>Looking at our left-skewed data, we see a long tail going out to the left. on the other hand, when we look at our right-skewed data, we see a long tail going out to the right. Finally, the symmetric data is essentially the same on either side.Let’s see how this affects our calculation of the mean and median.</p>
+<p>Below is an example of symmetric, left, and right-skewed data. <img src="601--Statistics-2_files/figure-html/unnamed-chunk-11-1.png" width="624" /></p>
+<p>Looking at our left-skewed data, we see a long tail going out to the <strong>left</strong>. On the other hand, when we look at our right-skewed data, we see a long tail going out to the <strong>right</strong>. Finally, the symmetric data is (approximately) <strong>the same on either side</strong>.Let’s see how this affects our calculation of the mean and median.</p>
 <pre class="r"><code># left-skewed data - mean &amp; median
 sample_data %&gt;%
   group_by(distribution) %&gt;%
@@ -273,9 +290,103 @@ sample_data %&gt;%
   </script>
 </div>
 <p>Our summarized data can be used to show how skew affects the mean and median. The symmetric distribution has a mean and median that are nearly identical. On the other hand, the left and right-skewed distributions show some discrepancies between mean and median.</p>
-<p>When we look at the right skewed histogram, the center of the data appears to be somwhere around 5-7, which the median confirms. However, the mean is actually much higher, with a value of 12. This is because the skewed values “pull” the mean away from we might think to be the center of the data. If we had blindly calculated the mean without taking a look at our data, we would have come away with a much different idea of the data’s central tendency.</p>
+<p>When we look at the right skewed histogram, the center of the data appears to be somewhere around 5-7, which the median confirms. However, the mean is actually much higher, with a value of 12. This is because the skewed values “pull” the mean away from we might think to be the center of the data. If we had blindly calculated the mean without taking a look at our data, we would have come away with a much different idea of the data’s central tendency.</p>
 <p>The same thing occurs with our left-skewed data. The median is 193, while the mean (188) is pulled towards the longer left tail.</p>
-To summarise: it’s crucial to visually examine your data. If your data exhibits any sort of skew, it’s best to use the median as a measure of central tendency. Otherwise, the mean is usually preferred. 
+<p>To summarise: it’s crucial to visually examine your data. If your data exhibits any sort of skew, it’s best to use the median as a measure of central tendency. Otherwise, the mean is usually preferred.</p>
+</div>
+</div>
+<div id="section-descriptive-statistics---variability" class="section level2">
+<h2>Descriptive Statistics - Variability</h2>
+<div id="section-variability" class="section level3">
+<h3>Variability</h3>
+<p>Now that we’ve discussed measures of central tendency, we must also discuss measures of <em>variability</em>. Variability generally refers to how different the values in our data are from one another. The first measure of variability is <em>range</em>.</p>
+<div id="section-range" class="section level4">
+<h4>Range</h4>
+<p><em>Range</em> is simply the maximum value in the dataset minus the minimum value in the dataset.</p>
+<p><span class="math inline">\(Range=Max-Min\)</span></p>
+<p>Going back to <code>mtcars</code>, the range of <code>wt</code> is calculated as follows:</p>
+<pre class="r"><code># base R method
+max(mtcars$wt)-min(mtcars$wt)</code></pre>
+<pre><code>## [1] 3.911</code></pre>
+<pre class="r"><code># Tidyverse method
+mtcars %&gt;%
+  summarise(
+    range_wt=max(wt)-min(wt)
+  )</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["range_wt"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"3.911"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="section-interquartile-range-iqr" class="section level4">
+<h4>Interquartile Range (IQR)</h4>
+<p>You’ve probably learned about quantiles before (also known as percentiles). <em>IQR</em> is simply the range from the 25th quantile to the 75th quantile.</p>
+<p><span class="math inline">\(IQR = 75th Percentile - 25th Percentile\)</span></p>
+<p>We can compute it easily in R using the <code>IQR()</code> function:</p>
+<pre class="r"><code># Base R method
+IQR(mtcars$wt)</code></pre>
+<pre><code>## [1] 1.02875</code></pre>
+<pre class="r"><code># tidyverse method
+mtcars %&gt;%
+  summarise(
+    iqr_wt=IQR(wt)
+  )</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["iqr_wt"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"1.02875"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="section-standard-deviation-sd" class="section level4">
+<h4>Standard Deviation (SD)</h4>
+<p><em>Standard deviation</em> is a more complex measure of variability, but one that’s far more common in practice than Range or IQR. Standard deviation is essentially the square root of the sum of squared deviations from the mean divided by the sample size. We use the <span class="math inline">\(\sigma\)</span> (sigma) symbol for the population standard deviation (which is usually unknown), and <span class="math inline">\(\hat{\sigma}\)</span> (sigma hat) for the sample standard deviation (which is what we must typically estimate as researchers).</p>
+<p><span class="math inline">\(\hat{\sigma} = \sqrt{\frac{\Sigma(x_{i}-\bar{x})^2}{N}}\)</span></p>
+<p>Standard deviation is best interpreted using the 68-95-99.7 rule - given the assumption that our data are normally distributed, 68% of our data will fall within 1 standard deviation of the mean, 95% of our data will fall within 2 standard deviations of the mean, and 99.7% of our data will fall within 3 standard deviations of the mean.</p>
+<p>Standard deviation can be computed in R using the <code>sd()</code> function.</p>
+<pre class="r"><code># Base R method
+sd(mtcars$wt)</code></pre>
+<pre><code>## [1] 0.9784574</code></pre>
+<pre class="r"><code># Tidyverse method
+mtcars %&gt;%
+  summarise(
+    sd_wt=sd(wt)
+  )</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["sd_wt"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.9784574"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="section-variance" class="section level4">
+<h4>Variance</h4>
+<p>The last measure of variability is <em>variance</em>. Variance is simply the sum of squared deviations from the mean divided by sample size. In other words, it is the same as standard deviation but without the square root. We use <span class="math inline">\(\sigma^{2}\)</span> to indicate population variance and <span class="math inline">\(\hat{\sigma^{2}}\)</span> to indicate sample variance.</p>
+<p><span class="math inline">\(\hat{\sigma^{2}} = \sqrt{\frac{\Sigma(x_{i}-\bar{x})^2}{N}}\)</span></p>
+<p>While variance is crucial for many mathematical aspects of statistics (which you will learn more about in the future), standard deviation is often much easier to interpret.</p>
+<p>Variance can be computed in R using the <code>var()</code> function.</p>
+<pre class="r"><code># Base R method
+var(mtcars$wt)</code></pre>
+<pre><code>## [1] 0.957379</code></pre>
+<pre class="r"><code># Tidyverse method
+mtcars %&gt;%
+  summarise(
+    var_wt=var(wt)
+  )</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["var_wt"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.957379"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</div>
+<div id="section-conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>You have now learned about types of numerical data, visualizing numerical data, and ways to measure central tendency and variability in numerical data.</p>
+<div id="section-references" class="section level3">
+<h3><strong>References</strong></h3>
+<p>Navarro, D. J. (2015). <em>Learning Statistics with R: A Tutorial for Psychology Students and Other Beginners</em>, Version 0.6.</p>
+
 <script type="application/shiny-prerendered" data-context="server-start">
 library(learnr)
 library(tidyverse)

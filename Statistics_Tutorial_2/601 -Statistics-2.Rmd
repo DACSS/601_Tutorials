@@ -19,10 +19,16 @@ We will use the following R Commands:
 
 * `mean()`
 * `median()`
+* `select()`
+* `summarise()`
+* `max()`
+* `min()`
+* `IQR()`
 * `sd()`
 * `var()`
 * `rnorm()`
 * `geom_histogram()`
+* `facet_wrap()`
 
 We will use the following dataset:  
   
@@ -61,7 +67,7 @@ Researchers commonly make a distinction between **interval** data, which lacks a
   
 There's one more type of numerical data to discuss: **ordinal data**. While ordinal, interval, and ratio data are all rank-ordered (i.e., higher values indicate higher amounts of the quantity being measured), ordinal data **does not assume equal distance between values**. Ordinal data also has no true zero.
   
-For example, you've probably filled out a survey where you were asked to rate your satisfaction with a product on a scale from 1-10. While a response of 5 indicates greater satisfaction than a response of 4, there is no way to know that the the difference between 5 and 4 is the same as the difference between 4 and 3 when you're dealing with ordinal data. These are convenient values that attempt measure something approximately but are in no way as precise as measuring temperature with a thermometer.
+For example, you've probably filled out a survey where you were asked to rate your satisfaction with a product on a scale from 1-10. While a response of 5 indicates greater satisfaction than a response of 4, there is no way to know if the the difference between 5 and 4 is the same as the difference between 4 and 3. These are convenient values that attempt measure satisfication approximately but are in no way as precise as measuring temperature with a thermometer.
 
 **To summarize:**  
   
@@ -78,7 +84,28 @@ Now we will discuss computing *descriptive statistics* for numerical data. Descr
   
 ### Central tendency
   
-Central tendency is a statistic that describes the center of a distribution of data. The most common measures are the mean, median, and mode. Let's start out by discussing the mean.
+Central tendency is a statistic that describes the center of a distribution of data. The most common measures are the mean, median, and mode. Let's start out by discussing the mode.
+
+#### Mode
+  
+The mode is the value that is most frequent in a dataset. For example, in the following data, '2' is the most common value, and therefore the mode.
+  
+```{r}
+data <- c(1,2,2,2,5,6,3,2,2,1,2,2)
+```
+  
+R does not have a function for computing the mode, so if we wish to do so, we must write one ourselves.
+  
+```{r}
+compute_mode <- function(x){
+  mode_index <- which.max(table(x))
+  mode <- x[mode_index]
+  return(mode)
+}
+compute_mode(data)
+```
+  
+The mode is a less frequently used measure of central tendency. Furthermore, when data are continuous, it's unlikely that a single mode will even exist. The mode is best used for categorical data (or occasionally discrete numerical data), so it will not be discussed further in this tutorial.
   
 #### Mean
   
@@ -149,9 +176,9 @@ sample_data <- tibble(
     names_to = "distribution",
     values_to = "value"
   ) 
-ggplot(sample_data, aes(value))+
-  geom_histogram(binwidth = 10,fill='gray',col='black')+
-  facet_wrap(distribution~., scales = 'free_x')
+#ggplot(sample_data, aes(value))+
+# geom_histogram(binwidth = 10,fill='gray',col='black')+
+#  facet_wrap(distribution~., scales = 'free_x')
 ```
   
 ### **Understanding the shape of our data**
@@ -175,13 +202,13 @@ There's one other crucial thing to point out about this data: it's (approximatel
 However, sometimes our data will be skewed. By this we mean, there is a long "tail" of values on one side of the distribution that can affect the way we interpret and summarize our data. 
   
 Below is an example of symmetric, left, and right-skewed data.
-```{r echo=F}
+```{r echo=F, message=F}
 ggplot(sample_data, aes(value))+
-  geom_histogram()+
-  facet_wrap(.~distribution)
+  geom_histogram(binwidth = 10,col='black',fill='white')+
+  facet_wrap(.~distribution, scales = 'free_x')
 ```
   
-Looking at our left-skewed data, we see a long tail going out to the left. on the other hand, when we look at our right-skewed data, we see a long tail going out to the right. Finally, the symmetric data is essentially the same on either side.Let's see how this affects our calculation of the mean and median.
+Looking at our left-skewed data, we see a long tail going out to the **left**. On the other hand, when we look at our right-skewed data, we see a long tail going out to the **right**. Finally, the symmetric data is (approximately) **the same on either side**.Let's see how this affects our calculation of the mean and median.
   
 ```{r}
 # left-skewed data - mean & median
@@ -195,8 +222,104 @@ sample_data %>%
   
 Our summarized data can be used to show how skew affects the mean and median. The symmetric distribution has a mean and median that are nearly identical. On the other hand, the left and right-skewed distributions show some discrepancies between mean and median. 
   
-When we look at the right skewed histogram, the center of the data appears to be somwhere around 5-7, which the median confirms. However, the mean is actually much higher, with a value of 12. This is because the skewed values "pull" the mean away from we might think to be the center of the data. If we had blindly calculated the mean without taking a look at our data, we would have come away with a much different idea of the data's central tendency.
+When we look at the right skewed histogram, the center of the data appears to be somewhere around 5-7, which the median confirms. However, the mean is actually much higher, with a value of 12. This is because the skewed values "pull" the mean away from we might think to be the center of the data. If we had blindly calculated the mean without taking a look at our data, we would have come away with a much different idea of the data's central tendency.
   
 The same thing occurs with our left-skewed data. The median is 193, while the mean (188) is pulled towards the longer left tail. 
   
 To summarise: it's crucial to visually examine your data. If your data exhibits any sort of skew, it's best to use the median as a measure of central tendency. Otherwise, the mean is usually preferred.
+  
+## Descriptive Statistics - Variability  
+  
+### Variability  
+Now that we've discussed measures of central tendency, we must also discuss measures of *variability*. Variability generally refers to how different the values in our data are from one another. The first measure of variability is *range*.  
+  
+#### Range
+  
+*Range* is simply the maximum value in the dataset minus the minimum value in the dataset.  
+  
+$Range=Max-Min$ 
+  
+Going back to `mtcars`, the range of `wt` is calculated as follows:
+  
+```{r}
+# base R method
+max(mtcars$wt)-min(mtcars$wt)
+
+# Tidyverse method
+mtcars %>%
+  summarise(
+    range_wt=max(wt)-min(wt)
+  )
+```
+  
+#### Interquartile Range (IQR)
+  
+You've probably learned about quantiles before (also known as percentiles). *IQR* is simply the range from the 25th quantile to the 75th quantile. 
+  
+$IQR = 75th Percentile - 25th Percentile$
+  
+We can compute it easily in R using the `IQR()` function:  
+  
+```{r}
+# Base R method
+IQR(mtcars$wt)
+
+# tidyverse method
+mtcars %>%
+  summarise(
+    iqr_wt=IQR(wt)
+  )
+```
+  
+#### Standard Deviation (SD)
+  
+*Standard deviation* is a more complex measure of variability, but one that's far more common in practice than Range or IQR. Standard deviation is essentially the square root of the sum of squared deviations from the mean divided by the sample size. We use the $\sigma$ (sigma) symbol for the population standard deviation (which is usually unknown), and $\hat{\sigma}$ (sigma hat) for the sample standard deviation (which is what we must typically estimate as researchers).
+  
+$\hat{\sigma} = \sqrt{\frac{\Sigma(x_{i}-\bar{x})^2}{N}}$  
+  
+Standard deviation is best interpreted using the 68-95-99.7 rule - given the assumption that our data are normally distributed, 68% of our data will fall within 1 standard deviation of the mean, 95% of our data will fall within 2 standard deviations of the mean, and 99.7% of our data will fall within 3 standard deviations of the mean. 
+  
+Standard deviation can be computed in R using the `sd()` function. 
+  
+```{r}
+# Base R method
+sd(mtcars$wt)
+
+# Tidyverse method
+mtcars %>%
+  summarise(
+    sd_wt=sd(wt)
+  )
+```
+  
+#### Variance  
+  
+The last measure of variability is *variance*. Variance is simply the sum of squared deviations from the mean divided by sample size. In other words, it is the same as standard deviation but without the square root. We use $\sigma^{2}$ to indicate population variance and $\hat{\sigma^{2}}$ to indicate sample variance.
+  
+$\hat{\sigma^{2}} = \sqrt{\frac{\Sigma(x_{i}-\bar{x})^2}{N}}$  
+  
+While variance is crucial for many mathematical aspects of statistics (which you will learn more about in the future), standard deviation is often much easier to interpret.
+   
+Variance can be computed in R using the `var()` function.
+  
+```{r}
+# Base R method
+var(mtcars$wt)
+
+# Tidyverse method
+mtcars %>%
+  summarise(
+    var_wt=var(wt)
+  )
+```
+  
+## Conclusion
+  
+You have now learned about types of numerical data, visualizing numerical data, and ways to measure central tendency and variability in numerical data.
+  
+
+### **References**
+  
+Navarro, D. J. (2015). *Learning Statistics with R: A Tutorial for Psychology Students and Other Beginners*, Version 0.6.   
+  
+  
