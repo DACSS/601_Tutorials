@@ -1,0 +1,13 @@
+name: 601-Rmarkdown_BestPractices
+title: 601-Rmarkdown_BestPractices
+username:
+account: dacss
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4441312
+bundleId: 4873403
+url: https://dacss.shinyapps.io/601-Rmarkdown_BestPractices/
+when: 1627677863.48066
+lastSyncTime: 1627677863.48067
+asMultiple: FALSE
+asStatic: FALSE

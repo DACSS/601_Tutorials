@@ -1,0 +1,392 @@
+---
+title: "Tutorial 9: Vectorization & Benchmarking"
+runtime: shiny_prerendered
+output: learnr::tutorial
+---
+  
+```{r setup, include=FALSE, message=FALSE}
+library(learnr)
+library(tidyverse)
+library(nycflights13)
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir=here::here('9_Vectorization&Benchmarking/prep/files'))
+tutorial_options(exercise.timelimit = 10)
+```
+  
+## **Introduction**
+In the previous tutorial, you learned about using for loops to repeat an operation in each value in a series of values. In this tutorial, we will contrast for loops with an alternative technique, *vectorization*. You will learn how to vectorize functions as well as compare the time it takes to run functions in R with a technique called *benchmarking*.
+  
+We will learn the following R Commands:
+  
+* `install.packages()`
+* `runif()`
+* `microbenchmark()`
+* `mean()`
+* `summary()`
+* `autoplot()`
+* `vector()`
+* `bind_rows()`
+* `list.files()`
+* `vapply()`
+* `sapply()`
+* `lapply()`
+* `map()`
+* `str()`
+* `map2()`
+* `pmap()`
+
+And we will use the following dataset: 
+  
+The `flights` dataset from the R package `nycflights13`, which contains all flights out of New York City in 2013.
+  
+## **Benchmarking**
+Before we learn how to compare for loops to vectorization, we need to learn about *benchmarking*. Benchmarking is used to measure the amount of time it takes to perform a computation in R. There are a number of ways to do so, but we will be using the R package `microbenchmark` [(link to CRAN page)](https://cran.r-project.org/web/packages/microbenchmark/).
+  
+### `microbenchmark`
+  
+To install `microbenchmark`, run the following code:
+```{r installing microbenchmark, eval=F}
+install.packages('microbenchmark')
+```
+  
+Then to use it, load the library:  
+```{r load microbenchmark library}
+library(microbenchmark)
+```
+  
+We can then use the `microbenchmark()` function to output timing results for a line of R code. Here, let's show how to measure the time it takes to get the mean of a numeric vector.
+  
+```{r benchmark the mean() function}
+vec <- runif(100) # randomly sample 100 values from a uniform distribution
+test_results <- microbenchmark(mean(vec)) # benchmarking the time it takes to get the mean of a vector
+```
+
+`microbenchmark()` works by running the code many times and calculating the runtime for each calculation. Each individual runtime is stored in `test_results`. Let's take a look at them here:  
+
+```{r glimpse test results}
+test_results
+```
+As you can see, there is some variability in runtime. This happens for a variety of reasons, but it doesn't particularly matter for us. We are interested in how long things **generally** take to run in R, so we'll compute some summary statistics. We can summarize the results using `summary(test_results)`. 
+  
+```{r summarise test results}
+summary(test_results)
+```
+  
+The results here are in a dataframe, showing the expression run, along with its min, mean, median, upper and lower quartiles, and the number of times it was ran. You  also get information about what unit the runtime was measured in. Here, it's microseconds.
+In this case, the calculation is incredibly fast - the mean runtime was `r summary(test_results)$mean` microseconds.  
+  
+If you're interested in more specifics of `microbenchmark()`, run `?microbenchmark` or `help("microbenchmark")` in your RStudio console. There are a number of optional arguments to the `microbenchmark()` function, including `times`, which specifies the number of times to evaluate the expression, and `unit`, the unit of measurement for the runtime. 
+  
+### using `microbenchmark` to compare code
+`microbenchmark's` real power comes from its ability to compare different expressions in R. Let's see if the R function `mean()` is faster than computing it ourselves using the `sum()` and `length()` functions. 
+
+```{r microbenchmark with mean()}
+test_results_2 <- microbenchmark(
+  'mean()'=mean(vec),
+  'sum()&length()'=sum(vec)/length(vec)
+)
+summary(test_results_2)
+```
+
+Here, the results are in nanoseconds. It turns out that using `sum()` and `length()` is actually faster than `mean()`. However, with a difference as trivial as `r abs(summary(test_results_2)$mean[1]-summary(test_results_2)$mean[2])` nanoseconds, it's probably best to use the simple convenience function `mean()`.
+
+### Plotting results
+You can even plot the results quite easily, using the `autoplot()` function from `ggplot2`, which automatically draws the plot that works best with the class of object it is given (in this case, it makes a violin plot).
+
+```{r autoplot results, message=F}
+autoplot(test_results_2)
+```
+
+Calculating a mean of `r length(vec)` numbers is a computationally trivial thing to do. However, not all the code you write will be doing something so simple. Next, we will learn how for loops and vectorization compare, and then measure the differences using `microbenchmark`.
+  
+### Exercise 1
+
+Below we create a numeric vector, called `vector_1`.
+```{r, echo=TRUE}
+vector_1 <- c(5,4,3,1,6,4,3,2,6,4,2,1,5,6,7,3,2,9,5,8,9)
+```
+
+ Standardize the vector by subtracting the mean of `vector_1` from each score and then dividing by `vector_1`'s standard deviation. Then, use `microbenchmark()` to measure the computation time in **seconds**, and plot your results.
+
+```{r microbenchmark_exercise, exercise=TRUE}
+#standardize vector_1 and use microbenchmark() to measure the computation time.
+
+```
+
+```{r microbenchmark_exercise-solution, message=F}
+vector_1_stdize <- (vector_1-mean(vector_1))/sd(vector_1)
+results <- microbenchmark(
+  'standardize'= vector_1_stdize <- (vector_1-mean(vector_1))/sd(vector_1),
+  unit='s'
+)
+autoplot(results)
+```
+
+
+## **For loop review**
+
+Let's start off with a review of for loops. To do so, we're going to use the `flights` dataset. 
+
+```{r flights dataset, echo=F}
+head(flights)
+```
+
+In this dataset, each row is an individual flight out of New York City. The column `dep_delay` contains the difference between the scheduled departure and the actual departure time, but in minutes. Now let's say we wanted to convert that to hours. To do so, we would divide each value in `dep_delay` by 60. We can do that using a `for` loop, and store the results in a vector.
+
+First, we store all the departure delays in minutes, in a vector called `delays_mins`(making sure to remove `NA` values for when a delay was not available). The number of delays is calculated using the `length` function, and is stored as `n_delays`. Then, we create the vector `delays_hours_loop` to store the results of our computation, and the `mins_to_hours()` function to actually compute the results. 
+
+```{r compute flight delays in hrs with for loop}
+delays_mins <- !is.na(flights$dep_delay) #for simplicity, we remove NA values
+n_delays <- length(delays_mins) #number of delays will equal the length of the vector
+delays_hours_loop <- vector('numeric',n_delays) # to store our results
+mins_to_hours <- function(x) x/60 # custom function to convert minutes to hours
+for(i in 1:n_delays){
+  delays_hours_loop[i] <- mins_to_hours(delays_mins[i])
+}
+```
+
+```{r show flight delays in hours}
+head(delays_hours_loop)
+```
+The operation worked just fine, and the results are stored in `delays_hours_loop`.
+However, given that there are `r n_delays` observations in this dataset, you may imagine that this many individual function calls can get computationally intensive. Though our current function is fairly simple, you may imagine that with more complex operations, the computation cost will add up fast. The next section will go through an alternative to for loops.
+
+## **Vectorization**
+Rather than using a for loop, we can **vectorize** our conversion of minutes to hours function by applying it to all the elements in `delays_mins` simultaneously. This is called **vectorizing**. Doing so is fairly simple, and it's often faster than a for loop.
+
+We can use our previous example of converting flight delays to hours.
+```{r compute flight delays in hrs with vectorization}
+delays_mins <- !is.na(flights$dep_time) # remove all flights with NA dep_time
+delays_hours <- delays_mins/60 # convert mins to hours by dividing by 60
+```
+
+Notice that here, we didn't even have to write a function. We just performed the operation by dividing  `delays_mins` by 60 (which automatically performs the division on each element of the vector, i.e. **vectorizing**). We could have called the `mins_to_hours()` function, but it's not necessary to do so.
+
+### Comparing vectorization to loops
+
+Now that we know about for loops and vectorization, we can use `microbenchmark` to compare the two. We will use the same example, converting `delays_mins` to hours, using both methods.
+
+```{r message=F}
+results_lv <- microbenchmark(
+  'loop'=for(i in 1:n_delays){
+  delays_hours_loop[i] <- mins_to_hours(delays_mins[i])
+},
+  'vectorize'=delays_hours_vectorize <- delays_mins/60
+)
+summary(results_lv)
+autoplot(results_lv)
+```
+  
+Even ignoring the obvious the advantage of being simpler to read, vectorization is clearly faster than a for loop in this case. 
+
+## **Vectorization using the `apply` family of functions**
+
+Sometimes you have something more complicated, that can't be performed in a single line of code. You can do it in a for loop, or you can use a function from the `apply` family to vectorize it. 
+
+To demonstrate the apply functions, let's start out with a common example: Reading in data files. 
+
+It's common to have to read in multiple data files in social science research. You may have an individual data file for each participant, and you need to combine them all into a single data frame in R.
+
+First, we'll use `list.files()` to store the names of all files in our current working directory to an object in R.
+
+```{r get files in directory}
+files <- list.files()
+head(files)
+```
+ 
+As you can see, we have a number of data files in our directory, all stored as files with a `.csv` extension.
+
+We can use a for loop to read in all the data files, and save each one as a dataframe inside a list.
+
+```{r read in files with for loop, message=F}
+data <- vector('list',length(files)) #initialize list
+for(i in 1:length(files)){
+  data[[i]]<-read_csv(files[[i]])
+}
+```
+
+Finally, we can use the `dplyr` function `bind_rows()` to bind all the dataframes into one, larger dataframe.
+
+```{r bind rows, message=F}
+dataset <- data %>%
+  bind_rows()
+glimpse(dataset)
+```
+
+**But wait!** There's a simpler (often faster) way to do it, using the `apply` family of functions. 
+
+There are several `apply` functions in R, including `lapply()`, `sapply()`, `vapply()`. They all work by taking an argument `X`, which is a data structure (e.g., vector) containing all the elements to apply a function to. The function is specified with the argument `FUN`. 
+
+### `lapply()`
+There are some differences between the functions, so we'll start out with (arguably) the most common version, `lapply()`. `lapply()` always returns data in the form of a list.
+
+Below we use `lapply()` to use the `read_csv()` function on each element of `files`. We then use the `dplyr` function `bind_rows()` to combine the results into one larger dataframe, called `data1`.
+
+```{r read in w/ lapply, message=F}
+data1 <- lapply(files, read_csv) %>% 
+  bind_rows()
+glimpse(data1)
+```
+
+In the above code, lapply calls the `read_csv()` function once for each value `files`. Each time it calls `read_csv()`, it uses that particular value in `files` as input to the function. 
+
+Note that the results will be identical between the `for` loop and the `lapply` version.
+
+However, the `lapply` version is both simpler to read and computationally faster (though the advantage is small). We can verify this using `microbenchmark`.
+
+```{r compare for loop to lapply, message=F} 
+files <-list.files()
+result <- microbenchmark(
+  'loop'=for(i in 1:length(files)){
+    data[[i]]<-read_csv(files[[i]])
+  },
+  'lapply'=data1 <- lapply(files, read_csv),
+  times = 50, # 'times' is used to specify the number of times to run each chunk of code
+  unit='s' # 'unit' specifies the unit of measurement we ask for ('s'=seconds)
+)
+summary(result)
+autoplot(result)
+```
+
+
+## **Other apply functions**
+
+There's other apply functions, too. We will briefly go into discussion of a few helpful versions - `sapply()` and `vapply()`
+
+### `sapply()`
+
+`sapply()` is very similar to `lapply()`, except that it attempts to simplify the result to an atomic vector if possible (whereas `lapply()` always returns a list). Observe the difference below, when we use a trivial example with a custom function that multiplies its input by 3.
+
+```{r lapply vs. sapply}
+triple <- function(x) x*3
+x <- seq(0,10)
+result_lapply <- lapply(x, triple)
+result_sapply <- sapply(x, triple)
+head(result_lapply)
+head(result_sapply)
+```
+
+As you can see, `lapply()` returns a list, whereas `sapply()` was able to simplify the result to an atomic vector. 
+
+### `vapply()`
+
+`vapply()` is similar to `sapply`, though it requires a third argument, `FUN.VALUE`, where the user must specify the format that they expect the results to be in. 
+
+Below, we use `numeric(1)` to tell `vapply()` that each time we call the function (that is, for each element of `x`) we expect a `numeric` result of length `1`. `vapply()` ensures that if the computation does not work as we intended, we will not get a result, forcing us to look at our code once more to ensure that it works as we intended.
+```{r vapply}
+vapply(x, triple, numeric(1))
+```
+
+  
+### Exercise 
+
+Below we create a numeric vector, called `vector_3`.
+```{r, echo=TRUE}
+vector_3 <- round(rnorm(50,mean=30,sd=5))
+```
+
+Write a function that takes a single input, `x`. The function squares `x` and then adds 1 to the result. Then, apply the function to each element of vector 3, once using `lapply()` and once using `sapply()`.
+
+```{r lapply, exercise=TRUE}
+
+
+```
+
+```{r lapply-solution, message=F}
+function_1 <- function(x) x^2+1
+lapply(vector_3, function_1)
+sapply(vector_3, function_1)
+```
+
+## **`purrr`**
+  
+In addition to the `apply` functions already included in R, there's a powerful package created to enhance your R vectorization: the `purrr` package, which is part of the tidyverse (see [this link](https://purrr.tidyverse.org/) to learn more).
+  
+To install `purrr`, simply run the following code:
+  
+```{r eval=F}
+install.packages("purrr")
+```
+  
+`purrr` is a powerful package containing a number of functions, and thus learning all of `purrr` is well beyond the scope of the present tutorial.   
+  
+With that being said, we will be going over a few helpful `purrr` functions that can be beneficial for those trying to vectorize code. 
+
+### `map()` 
+  
+`map()` allows us to vectorize a function - that is, ["apply it to each element of a list or vector"](https://purrr.tidyverse.org/reference/map.html). 
+  
+The first argument `map()` takes, `.x`, is the vector or list we wish to apply the function to. The second argument, `.f`, is the function we're using. Let's try an example. 
+  
+First, we create a vector of integers from 1 to 100, `vector_2`. Next, we are going to use `map()` to take 100 random samples (of 50 values) from a normal distribution with a standard deviation of 5. Importantly, **each sample has a different mean, which is specified by each element of `vector_2`**. The first time `rnorm()` runs, it will take 50 random samples with a mean of 1 (the **first** element of `vector_2`). The second time `rnorm()` runs, it will take 50 random samples with mean of 2 (the **second** element of `vector_2`). All in all, we will get a list of 100 elements, with each element containing 50 numbers sampled from a normal distribution with the mean equal to the list index. For example, the *23rd* list element will contain 50 values randomly sampled from a normal distribution with a mean of *23* and a standard deviation of 5. We specify `n` and `sd` in subsequent arguments.
+  
+```{r}
+vector_2 <- seq(1,100) # sequence of integers from 1 to 100
+map_results <- map(vector_2, rnorm,n=50, sd=5) # run rnorm() using each element of the vector as the "mean" argument
+str(map_results)
+```
+  
+We store our results in an object called `map_results`. We use `str()` to view the structure of the object, which is a list of 100 elements, each of which is a vector containing 50 values.
+  
+### `map2()`
+  
+Suppose we have two vectors, `means_vector` and `sd_vector`, each of which contains 100 values. We want to take 100 samples from a normal distribution, each with 50 values, with each mean equal to the ith element of `means_vector` and the standard deviation equal to the ith element of `sd_vector`. This may sound complicated, but we can actually do it rather simply using the `purrr` function `map2()`. See the code below for a demonstration.
+  
+`map2()` takes the arguments `.x` (the first vector or list), `.y` (the second vector or list), `.f` (the function to apply), and any additional arguments to pass to `.f` with `...`.   
+  
+First, we create a vector containing each individual mean we want to use for sampling, `means_vector`. Next, we create a vector containing each individual standard deviation we want to use for sampling, `sd_vector`. These are both vectors containing integers from 1 to 100.
+  
+Next, we specify the first vector given to `map2()`, `means_vector`. We then specify the second vector given to `map2()`, `sd_vector`. Next, we specify the function we are vectorizing, in this case, `rnorm()`. Lastly, we will also need to tell `rnorm()` how many values to sample each time, so we specify `n=50`. 
+  
+This line of code will create 100 samples, each with 50 values. The first sample comes from a normal distribution with a mean of `means_vector[1]` and a standard deviation of `sd_vector[1]`. The second sample comes from a normal distribution with a mean of `means_vector[2]` and a standard deviation of `sd_vector[2]`...and so on. These samples are stored in a list as `map2_results`, and we use `str()` to view the structure of this object.
+
+```{r}
+means_vector <- seq(1,100)
+sd_vector <- seq(1,100)
+map2_results <- map2(means_vector, sd_vector, rnorm, n=50)
+str(map2_results)
+```
+  
+### `pmap()`
+  
+What if we have 3, 4, or 5 vectors we want to apply a function to? Rather than a map3 or map4, `purrr` has a function called `pmap()`, for when you need to vectorize a function and have more than 2 vectors/lists.
+  
+`pmap()` takes the arguments `.l` (a list of vectors/lists), `.f` (the function to apply), and any additional arguments to pass to `.f` with `...`. 
+  
+Below, we create three vectors: `means_vector`, `sd_vector`, and `n_vector`. We are again going to get 100 random samples from a normal distribution. This time, `n` is also vectorized.
+  
+Next, we specify the first vector given to `pmap()`, `n_vector`. Note that we need to order our vectors in the order we want to give them to rnorm (that is, `n`, then `mean`, then `sd`), as well as wrap them all in a list. We then specify the second vector given to `pmap()`, `means_vector`. We then specify the third vector given to `pmap()`, `sd_vector`. Last, we specify the function we are vectorizing, in this case, `rnorm()`. 
+  
+This line of code will create 100 samples, each with 50 values. The first sample comes from a normal distribution with a mean of `means_vector[1]` and a standard deviation of `sd_vector[1]`, and contains `n_vector[1]` values. The second sample comes from a normal distribution with a mean of `means_vector[2]` and a standard deviation of `sd_vector[2]`, and contains `n_vector[2]` values...and so on. These samples are stored in a list as `map2_results`, and we use `str()` to view the structure of this object.  
+  
+```{r}
+means_vector <- seq(1,100)
+sd_vector <- seq(1,100)
+n_vector <- seq(1,100)
+pmap_results <- pmap(list(n=n_vector, mean=means_vector,sd=sd_vector),rnorm)
+```
+  
+### Exercise 
+  
+Using `sum()` and `pmap()`, add the ith elements of each of the three vectors `vec_1`, `vec_2`, `vec_3`. Store the results in an object called `vector_sum`. Then examine the object. Do the results look like you anticipated?
+  
+```{r}
+vec_1 <- round(runif(50,min=0,max=10))
+vec_2 <- round(runif(50,min=10,max=20))
+vec_3 <- round(runif(50,min=20,max=30))
+```
+
+```{r pmap_exercise, exercise=TRUE}
+
+```
+
+```{r pmap_exercise-solution}
+vector_sum <- pmap(list(vec_1, vec_2, vec_3),sum)
+str(vector_sum)
+# vector_sum should be a list of 50 elements, each of which contains a single value (sum of the ith element of vec_1, vec_2, vec_3)
+```
+
+
+## **Conclusion**
+  
+You've now learned about vectorization and benchmarking, as well as an introduction to the powerful `purrr` package.   

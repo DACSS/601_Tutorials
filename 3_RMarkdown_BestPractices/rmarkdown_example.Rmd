@@ -1,0 +1,48 @@
+---
+title: "Arithmetic in R"
+author: "Sean Conway"
+date: "7/4/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+We can do basic arithmetic very easily in R. Let's start with addition.
+
+### Addition
+You can use R as a calculator to do addition, using `+` the same way you would on a standard calculator.
+```{r addition}
+4+4
+8+9
+```
+
+### Subtraction
+The same goes for subtraction, but with the `-` symbol.
+```{r subtraction}
+10-8
+9-6
+```
+
+### Multiplication
+And multiplication, with `*`.
+```{r multiplication}
+5*3
+4*2
+```
+
+### Division
+Lastly, division uses the `/` symbol.
+```{r division}
+9/3
+40/6
+```
+
+## Conclusion
+Arithmetic is simple, easy, and convenient in R. 
+
+
