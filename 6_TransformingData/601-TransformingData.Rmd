@@ -1,5 +1,5 @@
 ---
-title: 'Tutorial 5: Transforming Data'
+title: 'Tutorial 6: Transforming Data'
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---

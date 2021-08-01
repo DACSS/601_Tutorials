@@ -151,7 +151,8 @@ sample_data</code></pre>
 <div id="section-frequency-tables" class="section level3">
 <h3><strong>Frequency tables</strong></h3>
 <p>A frequency table counts the <em>frequency</em> with which each individual value occurs. This is called <strong>tabulation</strong>. Let’s use a simulated dataset of republicans, democrats, and independents (for ease of visualization, the numerical values are changed to words).</p>
-<pre class="r"><code>sample_poly_data</code></pre>
+<pre class="r"><code># Sample data
+sample_poly_data</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["political_affiliation"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"independent"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"independent"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"democrat"},{"1":"independent"},{"1":"republican"},{"1":"republican"},{"1":"democrat"},{"1":"independent"},{"1":"republican"},{"1":"republican"},{"1":"independent"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"independent"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"independent"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"independent"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"democrat"},{"1":"republican"},{"1":"republican"},{"1":"independent"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"republican"},{"1":"democrat"},{"1":"democrat"},{"1":"democrat"},{"1":"republican"},{"1":"democrat"},{"1":"independent"},{"1":"republican"},{"1":"republican"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -159,7 +160,13 @@ sample_data</code></pre>
 </div>
 <p>These data are not very helpful in their current format. We need to find out how many Republicans, Democrats, and Independents are in our sample. In other words, we want to see how this variable is <em>distributed</em>.</p>
 <p>We can tabulate all unique values using R’s <code>table()</code> function.</p>
-<pre class="r"><code>freq_table_poly &lt;- sample_poly_data %&gt;%
+<pre class="r"><code># using the table function to get 1d frequency table - base R method
+table(sample_poly_data)</code></pre>
+<pre><code>## sample_poly_data
+##    democrat independent  republican 
+##          41          10          49</code></pre>
+<pre class="r"><code># using the table function to get 1d frequency table - tidyverse method
+freq_table_poly &lt;- sample_poly_data %&gt;%
   table()
 freq_table_poly</code></pre>
 <pre><code>## .
@@ -171,7 +178,13 @@ freq_table_poly</code></pre>
 <h3><strong>Relative Frequency Tables</strong></h3>
 <p>We can also compute a <strong>relative frequency table</strong>, which computes how often each value occurs compared to other values. Essentially, this gives us proportions for each value.</p>
 <p>We can do this using R’s <code>prop.table()</code> function. We can simply pass <code>freq_table_poly</code> to this function.</p>
-<pre class="r"><code>prop_table_poly &lt;- freq_table_poly %&gt;%
+<pre class="r"><code># using the table function to get 1d frequency table - base R method
+prop.table(freq_table_poly)</code></pre>
+<pre><code>## .
+##    democrat independent  republican 
+##        0.41        0.10        0.49</code></pre>
+<pre class="r"><code># using the table function to get 1d rel. frequency table - tidyverse method
+prop_table_poly &lt;- freq_table_poly %&gt;%
   prop.table()
 prop_table_poly</code></pre>
 <pre><code>## .
@@ -181,8 +194,9 @@ prop_table_poly</code></pre>
 </div>
 <div id="section-exercise-1" class="section level3">
 <h3><strong>Exercise 1</strong></h3>
-<p>Using the dataset <code>mtcars</code>, compute a one-way frequency table from the variable <code>vs</code> (engine shape), saving it as an object. Then compute a relative frequency table from that object, using the function <code>prop.table()</code>.</p>
-<pre class="r"><code>head(mtcars)</code></pre>
+<p>Using the dataset <code>mtcars</code>, compute a one-way frequency table from the variable <code>vs</code> (engine shape), saving it as an object. Then compute a relative frequency table from that object, using the function <code>prop.table()</code>. Also try doing it with and without pipes.</p>
+<pre class="r"><code># Quick look at the data.
+head(mtcars)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["mpg"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["cyl"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["disp"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["hp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["drat"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["wt"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["qsec"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["vs"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["am"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["gear"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["carb"],"name":[11],"type":["dbl"],"align":["right"]}],"data":[{"1":"21.0","2":"6","3":"160","4":"110","5":"3.90","6":"2.620","7":"16.46","8":"0","9":"1","10":"4","11":"4","_rn_":"Mazda RX4"},{"1":"21.0","2":"6","3":"160","4":"110","5":"3.90","6":"2.875","7":"17.02","8":"0","9":"1","10":"4","11":"4","_rn_":"Mazda RX4 Wag"},{"1":"22.8","2":"4","3":"108","4":"93","5":"3.85","6":"2.320","7":"18.61","8":"1","9":"1","10":"4","11":"1","_rn_":"Datsun 710"},{"1":"21.4","2":"6","3":"258","4":"110","5":"3.08","6":"3.215","7":"19.44","8":"1","9":"0","10":"3","11":"1","_rn_":"Hornet 4 Drive"},{"1":"18.7","2":"8","3":"360","4":"175","5":"3.15","6":"3.440","7":"17.02","8":"0","9":"0","10":"3","11":"2","_rn_":"Hornet Sportabout"},{"1":"18.1","2":"6","3":"225","4":"105","5":"2.76","6":"3.460","7":"20.22","8":"1","9":"0","10":"3","11":"1","_rn_":"Valiant"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -193,15 +207,18 @@ prop_table_poly</code></pre>
 <script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.timelimit":10,"exercise.checker":"NULL"}</script>
 </div>
 <div class="tutorial-exercise-support" data-label="one-way-freq-table-solution" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
-<pre class="text"><code># Compute freq table with mtcars$vs
-
-# tidyverse method
+<pre class="text"><code># tidyverse method
 freq_tab &lt;- mtcars %&gt;%
   select(vs) %&gt;%
   table()
 freq_tab
 freq_tab %&gt;%
-  prop.table()</code></pre>
+  prop.table()
+
+# base R method
+freq_tab_2 &lt;- table(mtcars$vs)
+freq_tab_2
+prop.table(freq_tab_2)</code></pre>
 </div>
 </div>
 </div>
@@ -209,19 +226,24 @@ freq_tab %&gt;%
 <h2><strong>Null Hypothesis Significance Testing</strong></h2>
 <div id="section-chi-square-goodness-of-fit" class="section level3">
 <h3><strong>Chi-Square Goodness of Fit</strong></h3>
-<pre class="r"><code>freq_table_poly</code></pre>
+<pre class="r"><code># Examining our 1d frequency table again
+freq_table_poly</code></pre>
 <pre><code>## .
 ##    democrat independent  republican 
 ##          41          10          49</code></pre>
 <p>Looking at our frequency table, it looks like people are slightly less likely to be Independents than they are to be Republicans or Democrats. We can think about this in terms of probabilities. If there was an “even split” between Republicans, Democrats, and Independents, ~33% of our sample would be Republicans, ~33% would be Democrats, and ~33% would be Independent, because <span class="math inline">\(100\% / 3 = 33.33\%\)</span>. However, this does not appear to be the case with our sample.</p>
 <p>We can use this principle to calculate the frequencies we would expect to observe in our sample, Republicans, Democrats, and Independents were equally common in our sample.</p>
 <p>To figure this out, we first find the number of people in our sample.</p>
-<pre class="r"><code>sample_size = nrow(sample_poly_data)</code></pre>
+<pre class="r"><code># use the nrow() function to get number of rows in the df (i.e., sample size)
+sample_size &lt;- nrow(sample_poly_data)</code></pre>
 <p>Then, we multiply <code>sample_size</code> by the proportion of each category we would expect <strong>IF</strong> Republicans, Democrats, and Independents were equally common in our sample.</p>
-<pre class="r"><code>prob &lt;- rep(1/3,3) #because there are 3 categories. 
-expected &lt;- sample_size*prob
-names(expected) &lt;- c(&#39;democrat&#39;, &#39;independent&#39;, &#39;republican&#39;)
-expected</code></pre>
+<pre class="r"><code># because there are 3 categories. 
+prob &lt;- rep(1/3,3) 
+# expected frequency for a cell = sample size * probability
+expected &lt;- sample_size*prob 
+# naming each category
+names(expected) &lt;- c(&#39;democrat&#39;, &#39;independent&#39;, &#39;republican&#39;) 
+expected </code></pre>
 <pre><code>##    democrat independent  republican 
 ##    33.33333    33.33333    33.33333</code></pre>
 <pre class="r"><code>freq_table_poly</code></pre>
@@ -240,19 +262,23 @@ That is, all probabilities are equal. Statisticians commonly use <span class="ma
 <p><span class="math inline">\(HA:At\,least\,one\,P_{i}\,is\,different.\)</span>.<br />
 That is, <strong>NOT</strong> all probabilities are equal. We don’t define the alternative hypothesis more specifically than that.</p>
 <p>To calculate the Chi-Square (<span class="math inline">\(\chi^{2}\)</span>) statistic, for each category, we subtract the expected counts from the observed counts, square that value, and divide by the expected counts. We then sum the results for each category.</p>
-<p>Below is the calculation in R. Note that this calculation is vectorized, and it is done so on the assumption that the observed and expected counts are in the same order (i.e., Democrat-Democrat, Republican-Republican, etc.).</p>
-<pre class="r"><code>chi_stat_gof &lt;- sum((freq_table_poly-expected)^2/expected)
+<p>Below is the calculation in R.</p>
+<pre class="r"><code># Calculating chi square statistic
+chi_stat_gof &lt;- sum((freq_table_poly-expected)^2/expected)
 chi_stat_gof</code></pre>
 <pre><code>## [1] 25.46</code></pre>
 <p>Our <span class="math inline">\(\chi^{2}\)</span> statistic is 25.46, which doesn’t necessarily tell us what we want to know. BUT, we can use this statistic to calculate our <strong>p-value</strong>.</p>
 <p>P-values are a <strong>very</strong> controversial topic in statistics these days. They are often misinterpreted. A p-value tells us <strong>the probability we would have observed these data (or data more extreme) if the null hypothesis were true</strong>. Note that the p-value does <strong>NOT</strong> tell you the probability the null hypothesis is true.</p>
 <p>We can get the p-value for our test using the <code>pchisq()</code> function. It requires a few arguments - <code>q</code> - the quantile (our <span class="math inline">\(\chi^{2}\)</span> statistic) and <code>df</code> - the degrees of freedom (the number of groups minus 1). We also need to tell R that <code>lower.tail=FALSE</code>. For reasons beyond the scope of this tutorial, the <span class="math inline">\(\chi^{2}\)</span> distribution is one-sided, so we need to change this argument to <code>FALSE</code>.</p>
-<pre class="r"><code>p_value_pol &lt;- pchisq(chi_stat_gof, df=2, lower.tail = FALSE) #3 groups (R, D, I) minus 1 = 2
+<pre class="r"><code># using pchisq() to get p value for the chi square statistic
+# 3 groups (R, D, I) minus 1 = 2 degrees of freedom
+p_value_pol &lt;- pchisq(chi_stat_gof, df=2, lower.tail = FALSE)
 p_value_pol</code></pre>
 <pre><code>## [1] 2.960951e-06</code></pre>
-<p>It looks like our p-value is 2.9609512^{-6}, indicating that it’s very unlikely we would have observed the frequencies we did if the null were true. It’s commonplace to reject the null hypothesis whenever our p value is less than .05. We will reject the null in this case, but beware: <strong>Null Hypothesis Significance Testing is often misused/misinterpreted</strong> (see the end of the tutorial). Again, remember that 2.9609512^{-6} is <strong>NOT</strong> the probability the null is true. Rather, it is <strong>the probability we would have observed the data if the null were true</strong>.</p>
+<p>It looks like our p-value is very small, indicating that it’s very unlikely we would have observed the frequencies we did if the null were true. It’s commonplace to reject the null hypothesis whenever our p value is less than .05. We will reject the null in this case, but beware: <strong>Null Hypothesis Significance Testing is often misused/misinterpreted</strong> (see the end of the tutorial). Again, remember that our p-value is <strong>NOT</strong> the probability the null is true. Rather, it is <strong>the probability we would have observed the data if the null were true</strong>.</p>
 <p>Finally, there’s actually an easier way to perform the test in R. We can simply give our frequency table (<code>freq_table_poly</code>) to the <code>chisq.test()</code> function.</p>
-<pre class="r"><code>chisq.test(freq_table_poly)</code></pre>
+<pre class="r"><code># Use the chisq.test() function to do the work for us
+chisq.test(freq_table_poly)</code></pre>
 <pre><code>## 
 ##  Chi-squared test for given probabilities
 ## 
@@ -263,7 +289,8 @@ p_value_pol</code></pre>
 <div id="section-exercise-2" class="section level3">
 <h3><strong>Exercise 2</strong></h3>
 <p>Using the dataset <code>mtcars</code>, perform a chi-square Goodness of Fit test on the frequency table computed in exercise 1.</p>
-<pre class="r"><code>freq_tab &lt;- mtcars %&gt;%
+<pre class="r"><code># Re-calculating the frequency table, tidyverse method
+freq_tab &lt;- mtcars %&gt;%
   select(vs) %&gt;%
   table()</code></pre>
 <div class="tutorial-exercise" data-label="gof-test" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
@@ -287,7 +314,8 @@ chisq.test(freq_tab)
 </div>
 <p>Let’s say we’re interested in two specific variables - <code>vs</code> and <code>am</code>. <code>vs</code> contains data about the shape of each car engine, where a value of 0 indicates that the engine is V-shaped, while a value of 1 indicates that the engine is straight. <code>am</code> contains data about each car’s transmission, where a value of 0 indicates an automatic transmission, while a value of 1 indicates a manual transmission.</p>
 <p>To make the data easier to look at, we are going to recode these values using dplyr. Specifically, we will use <code>mutate()</code> and <code>case_when()</code>. Note that this will not change the information contained in the data; it will only make it easier to look at.</p>
-<pre class="r"><code>mtcars &lt;- mtcars %&gt;% 
+<pre class="r"><code># Recoding data - calling the new columns vs_new &amp; am_new
+mtcars &lt;- mtcars %&gt;% 
   mutate(
     vs_new=case_when(
       vs==0 ~ &quot;v-shaped&quot;,
@@ -298,7 +326,8 @@ chisq.test(freq_tab)
       am==1 ~ &quot;manual&quot;
     )
   )
-mtcars %&gt;%
+# Previewing our new columns
+mtcars %&gt;% 
   select(am_new, vs_new)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -307,14 +336,22 @@ mtcars %&gt;%
 </div>
 <div id="section-contingency-tables" class="section level3">
 <h3><strong>Contingency Tables</strong></h3>
-<p>Now that are data is recoded, we can use the <code>table()</code> function to tabulate the co-occurence of values between <code>vs_new</code> and <code>am_new</code>. That is, a <em>multivariate frequency table</em> (multivariate simply means what it sounds like: multiple variables). This is also called a cross-tabulation.</p>
+<p>Now that our data are recoded, we can use the <code>table()</code> function to tabulate the co-occurence of values between <code>vs_new</code> and <code>am_new</code>. That is, a <em>multivariate frequency table</em> (multivariate simply means what it sounds like: multiple variables). This is also called a cross-tabulation.</p>
 <p>Note that the more variables you include, the more difficult a contingency table is to interpret. Typically, contingency tables look at 2 variables, or occasionally 3. A contingency table based on greater than 3 variables will be difficult to interpret (and will likely have small cell counts - see below).</p>
 <p>You also usually need to specify the variables you give <code>table()</code>. The original dataset, <code>mtcars</code>, has 13 variables. Let’s see what happens when we try to run the table function on this dataset without specifying the variables we want to cross-tabulate:</p>
-<pre class="r"><code>mtcars %&gt;%
+<pre class="r"><code># Showing what happens when you try to get a contingency table with too many variables
+mtcars %&gt;%
   table()</code></pre>
 <pre><code>## Error in table(.): attempt to make a table with &gt;= 2^31 elements</code></pre>
 <p>As you can see, there are too many elements for R to compute cross-tabs on. So you need to specify a finite number of variables.</p>
-<pre class="r"><code>freq_table_mtcars &lt;- mtcars %&gt;%
+<pre class="r"><code># contingency table for mtcars, Base R method
+table(mtcars$vs_new, mtcars$am_new)</code></pre>
+<pre><code>##           
+##            automatic manual
+##   straight         7      7
+##   v-shaped        12      6</code></pre>
+<pre class="r"><code># contingency table for mtcars, tidyverse method
+freq_table_mtcars &lt;- mtcars %&gt;%
   select(vs_new, am_new) %&gt;%
   table()
 freq_table_mtcars</code></pre>
@@ -336,14 +373,16 @@ freq_table_mtcars</code></pre>
 <p>The last thing to do before performing the test is define the method by which we calculate expected frequencies.</p>
 <p>The formula for expected frequencies for a given cell is the following:</p>
 <p><span class="math display">\[\frac{RowTotal*ColumnTotal}{TotalCounts}\]</span></p>
-<pre class="r"><code>freq_table_mtcars</code></pre>
+<pre class="r"><code># our contingency table
+freq_table_mtcars</code></pre>
 <pre><code>##           am_new
 ## vs_new     automatic manual
 ##   straight         7      7
 ##   v-shaped        12      6</code></pre>
 <p>We can work through each cell to demonstrate this. Let’s work through the first cell, with a <code>vs_new</code> value of “straight” and an <code>am_new</code> value of “automatic”. The row total for this cell is <span class="math inline">\(7+7=14\)</span>, and the column total for this cell is <span class="math inline">\(7+12=19\)</span>. The total counts is simply the total number of observations in the table, <span class="math inline">\(7+7+12+6=32\)</span>. So the expected counts for the first cell is <span class="math display">\[\frac{19*14}{32}=8.3125\]</span>.</p>
 <p>We could compute the expected frequencies for each cell, but we don’t have to. R can do it for us and output the results of the test when we use the <code>chisq.test()</code> function. We simply pass the contingency table <code>freq_table_mtcars</code> to the function and R knows that we want to perform a chi-square test of independence.</p>
-<pre class="r"><code>chisq.test(freq_table_mtcars)</code></pre>
+<pre class="r"><code># using chisq.test() to perform chi square test of independence
+chisq.test(freq_table_mtcars)</code></pre>
 <pre><code>## 
 ##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
 ## 
@@ -368,7 +407,8 @@ freq_table_mtcars</code></pre>
 <div id="section-fishers-exact-test" class="section level3">
 <h3><strong>Fisher’s Exact Test</strong></h3>
 <p>Fisher’s Exact Test relies on a different distribution than the chi-square test. The details of this are unimportant here. However, we can still use the Fisher’s Exact Test to test the independence of <code>vs_new</code> and <code>am_new</code> in the <code>mtcars</code> dataset. All we need to do is pass the table <code>freq_table_mtcars</code> to the R function <code>fisher.test()</code>, and we will have a result.</p>
-<pre class="r"><code>fisher.test(freq_table_mtcars)</code></pre>
+<pre class="r"><code># use fisher.test() to perform fisher exact test on our frequency table
+fisher.test(freq_table_mtcars)</code></pre>
 <pre><code>## 
 ##  Fisher&#39;s Exact Test for Count Data
 ## 

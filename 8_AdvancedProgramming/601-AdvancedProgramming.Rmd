@@ -1,5 +1,5 @@
 ---
-title: 'Tutorial 7: Advanced Programming'
+title: 'Tutorial 8: Advanced Programming'
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---

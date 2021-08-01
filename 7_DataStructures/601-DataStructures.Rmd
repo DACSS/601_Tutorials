@@ -1,5 +1,5 @@
 ---
-title: 'Tutorial 6: Data Structures'
+title: 'Tutorial 7: Data Structures'
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---

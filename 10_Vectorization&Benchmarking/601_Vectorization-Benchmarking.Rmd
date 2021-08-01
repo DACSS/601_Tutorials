@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 9: Vectorization & Benchmarking"
+title: "Tutorial 10: ADVANCED - Vectorization & Benchmarking"
 runtime: shiny_prerendered
 output: learnr::tutorial
 ---

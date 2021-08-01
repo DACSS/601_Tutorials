@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 8: Basics of Modeling"
+title: "Tutorial 9: Basics of Modeling"
 runtime: shiny_prerendered
 output: learnr::tutorial
 ---
