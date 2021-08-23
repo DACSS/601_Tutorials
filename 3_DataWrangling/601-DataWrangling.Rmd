@@ -24,8 +24,8 @@ We will learn the following R Commands:
 * `select()`
 * `table()`
 * `prop.table()`
-* `gather()`
-* `spread()`
+* `pivot_longer()`
+* `pivot_wider()`
 
 We will be introduced to following datasets:
 
@@ -41,7 +41,7 @@ To that end, I have posted to our Google Classroom an R script featuring example
 
 ## **Introducing the Data**
 
-R reads external datasets as objects called dataframes. Dataframes are two-dimensional data structures, or in other words, tables. Think of them as spreadsheets like you would find in Microsoft Excel or Google Sheets, consisting of columns and rows. Many R functions, and the most important ones we will learn about in these tutorials, work with dataframes. 
+R reads external datasets as objects called dataframes. Dataframes are two-dimensional data structures, or in other words, tables. Think of them as pivot_widersheets like you would find in Microsoft Excel or Google Sheets, consisting of columns and rows. Many R functions, and the most important ones we will learn about in these tutorials, work with dataframes. 
 
 We will preview three datasets that will be used in this tutorial and future tutorials. 
 
@@ -320,17 +320,17 @@ We have worked with data as they were formatted by the original dataset authors.
 1. Each observation has it's own row.
 1. Each value has it's own cell. 
 
-As we look to tidy our data, two functions are likely to help: `gather()` and `spread()`.
+As we look to tidy our data, two functions are likely to help: `pivot_longer()` and `pivot_wider()`.
 
-## **Intro: Gather and Spread**
+## **Intro: pivot_longer and pivot_wider**
 
 The point of data wrangling is to turn messy data into tidy data. But what exactly does it mean for data to be *messy* or *tidy*? As mentioned in the introduction, data is tidy when individual rows represent observances, individual columns represent variables, and individual cells represent values. 
 
-The **electric** and **pseo** datasets we have been using are fairly complex datasets - with multiple entries for each school in pseo and multiple columns for each annual country measure in electric. Until now, we have just been working around or ignoring their complexity and not trying to reshape the data to isolate the specific combination of data points we are interested in. Now, we will learn to use the two most useful data wrangling functions, `gather()` and `spread()`, to reorganize them. These functions convert columns into new rows (gather) and condense rows into new columns (spread).
+The **electric** and **pseo** datasets we have been using are fairly complex datasets - with multiple entries for each school in pseo and multiple columns for each annual country measure in electric. Until now, we have just been working around or ignoring their complexity and not trying to reshape the data to isolate the specific combination of data points we are interested in. Now, we will learn to use the two most useful data wrangling functions, `pivot_longer()` and `pivot_wider()`, to reorganize them. These functions convert columns into new rows (pivot_longer) and condense rows into new columns (pivot_wider).
 
-## **Gather: Basics**
+## **pivot_longer: Basics**
 
-Let's start with `gather()` and **electric**. `Gather()` collapses multiple columns into one column; where the original column names become row values. It is used when you notice that you have columns that are not variables. `Gather()` makes "wide" data "taller". For example, in **electric**, the columns represent years. While time is certainly a variable, the primary variable being measured in **electric** is electricity access. Different years are, more accurately, different observances of that variable. We can use `gather()` to reshape the data to fit accordingly.
+Let's start with `pivot_longer()` and **electric**. `pivot_longer()` collapses multiple columns into one column; where the original column names become row values. It is used when you notice that you have columns that are not variables. `pivot_longer()` makes "wide" data "taller". For example, in **electric**, the columns represent years. While time is certainly a variable, the primary variable being measured in **electric** is electricity access. Different years are, more accurately, different observances of that variable. We can use `pivot_longer()` to reshape the data to fit accordingly.
 
 As a reminder, here is what we know about **electric** before wrangling. There are 261 country cases, each identied by a country name and country code. Each country has 27 years (1990-2016) where the variable `year` indicates the proportion of the population with access to electricity during that year.
 
@@ -338,21 +338,21 @@ As a reminder, here is what we know about **electric** before wrangling. There a
 str(electric)
 ```
 
-Now we will use `gather()` to reshape the data into country-year cases. The goal is to create a new dataset with 4 columns (country name, country code, year, and access) and 261x27=7,047 rows.
+Now we will use `pivot_longer()` to reshape the data into country-year cases. The goal is to create a new dataset with 4 columns (country name, country code, year, and access) and 261x27=7,047 rows.
 
-The `gather()` function follows the following format: `gather(data, columns, key = "key name", value = "value name")`. The **key** refers to the new column that will contain the old column names. In the case of **electric**, the key is **year**. The **value** refers to the new column that will contain the data that used to be found in rows. In the case of **electric**, the value is **access** (to electricity). When using this formula, you can refer to a single column, a list of columns, or as shown in the next example, a range of columns using `:`. However, it is usually best to gather *all* of the columns of data available (otherwise, your data will be left in a half-messy, half-tidy state, which is probably worse than before). Below, all of the years of **electric** are gathered into a **year** column and an **access** column.
+The `pivot_longer()` function follows the following format: `pivot_longer(data, columns, names_to = "new column name", value = "value")`. The **names_to** refers to the new column that will contain the old column names. In the case of **electric**, the names_to is **year**. The **values_to** refers to the new column that will contain the data that used to be found in rows. In the case of **electric**, the values_to is **access** (to electricity). When using this formula, you can refer to a single column, a list of columns, or as shown in the next example, a range of columns using `:`. However, it is usually best to pivot_longer *all* of the columns of data available (otherwise, your data will be left in a half-messy, half-tidy state, which is probably worse than before). Below, all of the years of **electric** are pivot_longered into a **year** column and an **access** column.
 
 ```{r, echo=TRUE}
-gather(electric, `1990`:`2016`, key = "year", value = "access")
+pivot_longer(electric, `1990`:`2016`, names_to = "year", values_to = "access")
 ```
 
-The purpose of `gather()` should now be evident. The mostly horizontal original data has been converted into mostly vertical data. 
+The purpose of `pivot_longer()` should now be evident. The mostly horizontal original data has been converted into mostly vertical data. 
 
 One trade-off is that it is now much harder to look at the progression of individual countries since they are no longer represented by single rows. Fear not- this issue can be easily solved with either `filter()` or `arrange()`, two functions we will learn later on.
 
-## **Spread**
+## **pivot_wider**
 
-`Spread()` is the opposite of `gather()`. It is used when you have rows that represent variables, not different observances. `Spread()` converts the different values of rows into new columns, making "tall" data "wider". In **pseo**, there are many examples of rows like this, like **year_postgrad**, which we have had to deal with in prior tutorials. **Year_postgrad** is measured in rows (with a value of either 1, 5, or 10), but it is really a variable. We can use `spread()` to spread earnings data across new columns for different years post-graduation.
+`pivot_wider()` is the opposite of `pivot_longer()`. It is used when you have rows that represent variables, not different observances. `pivot_wider()` converts the different values of rows into new columns, making "tall" data "wider". In **pseo**, there are many examples of rows like this, like **year_postgrad**, which we have had to deal with in prior tutorials. **Year_postgrad** is measured in rows (with a value of either 1, 5, or 10), but it is really a variable. We can use `pivot_wider()` to pivot_wider earnings data across new columns for different years post-graduation.
 
 For reference, this is what **pseo** looks like before wrangling:
 
@@ -360,28 +360,31 @@ For reference, this is what **pseo** looks like before wrangling:
 pseo
 ```
 
-`Spread()` follows the format: `spread(data, key, value)`. The **key** is the original column whose values will become new column names, which in this case is **year_postgrad**. The **value** is the column whose information will become the values in the new columns, which in the example below, is **p50_earnings**. Below, the values of median earnings in **pseo** are spread across new columns for years post-graduation.
+`pivot_wider()` follows the format: `pivot_wider(data, names_from, values_from)`. The **names_from** is the original column whose values will become new column names, which in this case is **year_postgrad**. The **values_from** is the column whose information will become the values in the new columns, which in the example below, is **p50_earnings**. Below, the values of median earnings in **pseo** are pivot_wider across new columns for years post-graduation.
 
 ```{r, echo=TRUE}
-spread(pseo, year_postgrad, p50_earnings)
+pivot_wider(pseo, names_from=year_postgrad, values_from=p50_earnings)
 ```
 
 The new columns are listed at the very end, so you will have to scroll to the right to see them. Three new year columns (**1**, **5**, and **10**) have now replaced the old columns **year_postgrad** and **p50_earnings**. It is now possible to view the median earnings for a certain number of years after graduation as a column, not as a subset of rows. 
 
-Why is this useful? In the example below, we pipe `spread()`, `select()`, and `summarize_all()` to find the mean income of the entire dataset for different years after graduation. We'll come back to the piping operator and `Summarize_all()` later on. 
+Why is this useful? In the example below, we pipe `pivot_wider()`, `select()`, and `summarize_all()` to find the mean income of the entire dataset for different years after graduation. We'll come back to the piping operator and `Summarize_all()` later on. 
+  
+We also use `mutate(row=row_number())` to give each row a unique identifying value.  
 
 ```{r, echo=TRUE}
 pseo %>%
-  spread(year_postgrad, p50_earnings) %>%
+  mutate(row=row_number()) %>%
+  pivot_wider(names_from=year_postgrad, values_from=p50_earnings)%>%
   select(`1`, `5`, `10`) %>%
   summarize_all(mean, na.rm = TRUE)
 ```
 
-With `gather()` and `spread()`, you now know the fundamentals of reshaping data. It is largely up to you to decide when you need to use these functions and if they will be helpful. When confronted with a large dataset, rearranging data to be easy to analyze is very important. Like always, there are many methods to do the same things in R, but these functions are useful options to have. 
+With `pivot_longer()` and `pivot_wider()`, you now know the fundamentals of reshaping data. It is largely up to you to decide when you need to use these functions and if they will be helpful. When confronted with a large dataset, rearranging data to be easy to analyze is very important. Like always, there are many methods to do the same things in R, but these functions are useful options to have. 
 
-### **Spread: Advanced**
+### **pivot_wider: Advanced**
 
-Spread can be used to manipulate a dataset and save it as a new one for analysis, but much like gather, it is often used as a part of a piped set of consecutive commands to wrangle the data into the desired format and with the desired summary statistics or other information.
+pivot_wider can be used to manipulate a dataset and save it as a new one for analysis, but much like pivot_longer, it is often used as a part of a piped set of consecutive commands to wrangle the data into the desired format and with the desired summary statistics or other information.
 
 ## **Conclusion & Glossary**
 
@@ -411,5 +414,5 @@ Here's a recap of the functions you have encountered so far:
  + `contains()`
 * Get values of column: `table()`
 * Get proportions of values of column: `prop.table()`
-* Tidy data: `gather()` and `spread()`
+* Tidy data: `pivot_longer()` and `pivot_wider()`
 
