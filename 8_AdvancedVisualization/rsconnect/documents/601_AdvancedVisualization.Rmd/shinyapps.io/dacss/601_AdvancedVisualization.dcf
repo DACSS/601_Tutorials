@@ -1,0 +1,13 @@
+name: 601_AdvancedVisualization
+title: 601_AdvancedVisualization
+username:
+account: dacss
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4544872
+bundleId: 4969201
+url: https://dacss.shinyapps.io/601_AdvancedVisualization/
+when: 1630015967.45424
+lastSyncTime: 1630015967.45425
+asMultiple: FALSE
+asStatic: FALSE
