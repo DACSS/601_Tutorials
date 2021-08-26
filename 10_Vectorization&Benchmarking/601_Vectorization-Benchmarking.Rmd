@@ -9,7 +9,7 @@ library(learnr)
 library(tidyverse)
 library(nycflights13)
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir=here::here('9_Vectorization&Benchmarking/prep/files'))
+knitr::opts_knit$set(root.dir=here::here('10_Vectorization&Benchmarking/prep/files'))
 tutorial_options(exercise.timelimit = 10)
 ```
   
